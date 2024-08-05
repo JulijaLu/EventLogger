@@ -10,8 +10,11 @@ import java.util.List;
 @Service
 public class EventServiceImpl implements EventService {
 
-    @Autowired
     private EventMapper eventMapper;
+
+    public EventServiceImpl(EventMapper eventMapper) {
+        this.eventMapper = eventMapper;
+    }
 
     @Override
     public Event findById(int id) {
@@ -29,8 +32,8 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public void updateEvent(int id) {
-        eventMapper.updateEvent(id);
+    public void updateEvent(Event event) {
+        eventMapper.updateEvent(event);
     }
 
     @Override

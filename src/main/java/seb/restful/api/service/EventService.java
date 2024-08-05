@@ -8,7 +8,7 @@ public interface EventService {
     Event findById(int id);
     List<Event> findAll();
     void createEvent(Event event);
-    void updateEvent(int id);
+    void updateEvent(Event event);
     void delete(int id);
 
 }

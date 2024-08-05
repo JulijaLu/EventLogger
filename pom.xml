@@ -12,7 +12,9 @@
 	<artifactId>demo</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>EventMonitor</name>
+
 	<description>Demo project for Spring Boot</description>
+
 	<url/>
 	<licenses>
 		<license/>
@@ -39,7 +41,6 @@
 			<artifactId>mybatis-spring-boot-starter</artifactId>
 			<version>3.0.3</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -51,62 +52,62 @@
 			<version>3.0.3</version>
 			<scope>test</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>com.mysql</groupId>
 			<artifactId>mysql-connector-j</artifactId>
 			<version>9.0.0</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-api</artifactId>
 			<version>5.10.2</version>
 			<scope>test</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
 			<version>5.10.2</version>
 			<scope>test</scope>
 		</dependency>
-
-
 		<dependency>
 			<groupId>org.assertj</groupId>
 			<artifactId>assertj-core</artifactId>
 			<version>3.26.0</version>
 			<scope>test</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<version>1.18.34</version>
 			<scope>provided</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger2</artifactId>
 			<version>3.0.0</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>5.12.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+			<version>3.3.2</version>
+		</dependency>
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
-			<version>2.2.224</version>
 			<scope>runtime</scope>
+			<version>2.3.230</version>
 		</dependency>
-
 		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>2.0.2-beta</version>
-			<scope>test</scope>
+			<groupId>org.hibernate.validator</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>8.0.0.Final</version>
 		</dependency>
-
 	</dependencies>
 
 	<build>

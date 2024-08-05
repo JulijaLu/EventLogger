@@ -2,26 +2,31 @@ package seb.restful.api.model;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import seb.restful.api.model.enums.MessageType;
+import jakarta.validation.constraints.*;
 
+@Entity
+@AllArgsConstructor
+@Builder
+@NoArgsConstructor
 public class Event {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private LocalDateTime time;
     private MessageType type;
+    @Size(min = 10, max = 1024)
     private String message;
     private String userId;
     private String transactionId;
-
-    public Event(int id, LocalDateTime time, MessageType type,
-    String message, String userId, String transactionId) {
-        this.id = id;
-        this.time = time;
-        this.type = type;
-        this.message = messageLengthValidator(message);
-        this.userId = userId;
-        this.transactionId = transactionId;
-    }
 
     public int getId() {
         return id;
@@ -47,11 +52,11 @@ public class Event {
         this.type = type;
     }
 
-    public String getMessage() {
+    public @Size(min = 10, max = 1024) String getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
+    public void setMessage(@Size(min = 10, max = 1024) String message) {
         this.message = message;
     }
 
@@ -69,12 +74,5 @@ public class Event {
 
     public void setTransactionId(String transactionId) {
         this.transactionId = transactionId;
-    }
-
-    public String messageLengthValidator(String value) {
-        if (value != null && value.length() >= 1024) {
-            throw new IllegalArgumentException("Message format corrupted: cannot exceed 1024 symbols.");
-        }
-        return this.message = value;
     }
 }

@@ -3,12 +3,13 @@ package seb.restful.api.mapper;
 import org.apache.ibatis.annotations.*;
 import seb.restful.api.model.Event;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Mapper
 public interface EventMapper {
 
-    @Select("select * from events")
+    @Select("SELECT * FROM events")
     List<Event> findAll();
 
     @Select("SELECT * from events WHERE id=#{id}")
@@ -19,9 +20,9 @@ public interface EventMapper {
             "VALUES (#{id}, #{time}, #{type}, #{message}, #{userId}, #{transactionId});")
     void createEvent(Event event);
 
-    @Update("UPDATE events SET id = #{id}, type = #{type}, message = #{message}," +
-            " userId = #{userId}, transactionId = #{transactionId} WHERE ID = #{id}")
-    void updateEvent(int id);
+    @Update("UPDATE events SET time = #{time}, type = #{type}, message = #{message}," +
+            " userId = #{userId}, transactionId = #{transactionId} WHERE id = #{id}")
+    void updateEvent(Event event);
 
     @Delete("DELETE from events WHERE ID = #{id}")
     void deleteEvent(int id);

@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
-class EventMapperTest {
+public class EventMapperTest {
 
     @Autowired
     private EventMapper eventMapper;

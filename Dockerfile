@@ -1,5 +1,5 @@
-FROM openjdk:22
+FROM openjdk:21
 WORKDIR /eventApp
 COPY target/event-logger.jar evenLogger.jar
-EXPOSE 9090
+EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "evenLogger.jar"]
