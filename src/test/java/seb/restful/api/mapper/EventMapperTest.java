@@ -1,5 +1,6 @@
 package seb.restful.api.mapper;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,10 +22,28 @@ public class EventMapperTest {
     @Autowired
     private EventMapper eventMapper;
 
+    private final List<Event> events = new ArrayList<>();
+
+    @BeforeEach
+    void setUp() {
+        events.add(new Event(1,
+                LocalDateTime.now(),
+                MessageType.DEBUG,
+                "event submitted",
+                "12345",
+                "444-555-666"));
+        events.add(new Event(2,
+                LocalDateTime.now(),
+                MessageType.INFO,
+                "event being processed",
+                "12346",
+                "444-555-333"));
+    }
+
     @Test
     void findAllTest() {
-        eventMapper.createEvent(new Event(1, LocalDateTime.now(), MessageType.DEBUG, "event submitted", "12345", "444-555-666"));
-        eventMapper.createEvent(new Event(2, LocalDateTime.now(), MessageType.INFO, "event being processed", "12345", "444-555-666"));
+        eventMapper.createEvent(events.get(0));
+        eventMapper.createEvent(events.get(1));
         List<Event> events = eventMapper.findAll();
         assertNotNull(events);
         assertEquals(2, events.size());
@@ -32,7 +51,7 @@ public class EventMapperTest {
 
     @Test
     void findByIdTest() {
-        Event event = new Event(1, LocalDateTime.now(), MessageType.DEBUG, "event submitted", "12345", "444-555-666");
+        Event event = events.get(1);
         eventMapper.createEvent(event);
         Event foundEvent = eventMapper.findById(event.getId());
         assertNotNull(foundEvent);
@@ -41,7 +60,7 @@ public class EventMapperTest {
 
     @Test
     void createEventTest() {
-        Event event = new Event(1, LocalDateTime.now(), MessageType.DEBUG, "event submitted", "12345", "444-555-666");
+        Event event = events.get(1);
         List <Event> savedEvents = new ArrayList<>();
         savedEvents.add(event);
         assertNotNull(savedEvents);
@@ -56,7 +75,7 @@ public class EventMapperTest {
 
     @Test
     void updateEventTest() {
-        Event event = new Event(1, LocalDateTime.now(), MessageType.DEBUG, "event submitted", "12345", "444-555-666");
+        Event event = events.get(1);
         eventMapper.createEvent(event);
         event.setMessage("no code was debugged");
         eventMapper.createEvent(event);
@@ -67,7 +86,7 @@ public class EventMapperTest {
 
     @Test
     void deleteEventTest() {
-        Event event = new Event(1, LocalDateTime.now(), MessageType.DEBUG, "event submitted", "12345", "444-555-666");
+        Event event = events.get(1);
         eventMapper.createEvent(event);
         eventMapper.deleteEvent(event.getId());
         Event deletedEvent = eventMapper.findById(event.getId());

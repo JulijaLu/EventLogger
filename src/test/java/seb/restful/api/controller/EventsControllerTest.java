@@ -1,12 +1,15 @@
 package seb.restful.api.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -17,8 +20,11 @@ import seb.restful.api.service.EventServiceImpl;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -71,15 +77,29 @@ class EventsControllerTest {
     }
 
     @Test
-    public void getEventByIdTest() {
-
+    public void getEventByIdTest() throws Exception {
+        when(eventService.findById(1)).thenReturn(Optional.of(events.get(1)));
+        mockMvc.perform(MockMvcRequestBuilders.get("/events/1"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").value(1))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].type").value("DEBUG"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].message").value("event submitted"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].userId").value("12345"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].transactionId").value("444-555-666"));
     }
 
     @Test
-    void updateEventTest() {
+    void updateEventTest() throws Exception {
+        Event event = new Event(2, LocalDateTime.now(), MessageType.INFO, "event being processed", "12345 updated", "444-555-666");
+        mockMvc.perform(put("/events/2"))
+//                .content(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(event))
+        .andExpect(status().isNoContent());
     }
 
     @Test
-    void deleteEventTest() {
+    void deleteEventTest() throws Exception {
+        mockMvc.perform(delete("/events/2"))
+                .andExpect(status().isNoContent());
     }
 }
