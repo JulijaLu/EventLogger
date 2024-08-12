@@ -1,17 +1,18 @@
 package lt.seb.restful.api.model;
 
-import java.time.LocalDateTime;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.*;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import lt.seb.restful.api.model.enums.MessageType;
-import jakarta.validation.constraints.*;
 import org.hibernate.annotations.CreationTimestamp;
 
-@Data
+import java.time.LocalDateTime;
+
 @Entity
 @AllArgsConstructor
 @Builder
@@ -23,7 +24,7 @@ public class Event {
     private int id;
     @CreationTimestamp
     private LocalDateTime time;
-    @Getter @Setter private MessageType type;
+    private MessageType type;
     @Size(min = 10, max = 1024)
     private String message;
     private int userId;
@@ -36,4 +37,51 @@ public class Event {
         this.transactionId = transactionId;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public LocalDateTime getTime() {
+        return time;
+    }
+
+    public void setTime(LocalDateTime time) {
+        this.time = time;
+    }
+
+    public MessageType getType() {
+        return type;
+    }
+
+    public void setType(MessageType type) {
+        this.type = type;
+    }
+
+    public @Size(min = 10, max = 1024) String getMessage() {
+        return message;
+    }
+
+    public void setMessage(@Size(min = 10, max = 1024) String message) {
+        this.message = message;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public int getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(int transactionId) {
+        this.transactionId = transactionId;
+    }
 }
