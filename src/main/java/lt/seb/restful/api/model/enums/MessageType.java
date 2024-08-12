@@ -1,4 +1,4 @@
-package seb.restful.api.model.enums;
+package lt.seb.restful.api.model.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

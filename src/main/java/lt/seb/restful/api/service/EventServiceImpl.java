@@ -1,11 +1,12 @@
-package seb.restful.api.service;
+package lt.seb.restful.api.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import seb.restful.api.mapper.EventMapper;
-import seb.restful.api.model.Event;
+import lt.seb.restful.api.mapper.EventMapper;
+import lt.seb.restful.api.model.Event;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EventServiceImpl implements EventService {
@@ -17,7 +18,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Event findById(int id) {
+    public Optional <Event> findById(int id) {
         return eventMapper.findById(id);
     }
 

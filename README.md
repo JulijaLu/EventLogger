@@ -13,25 +13,31 @@ Preprequisite: Java JDK 22
 
 **Run**
 
-docker build --
+mvn -N wrapper:wrapper
+./mvnw clean install
+./mvnw spring-boot:run
 
 **SERVER**
 
-localhost:9090
+localhost:8080
+
+**Swagger documentation**
+
+http://localhost:8080/swagger-ui/index.html
 
 **Sample flow**
 
 See all events:
 
-GET: http://localhost:9090/events/all
+GET: http://localhost:8080/events/all
 
 Update event:
 
-PUT: http://localhost:9090/events/update/1
+PUT: http://localhost:8080/events/update/1
 
 Delete event:
 
-DELETE: http://localhost:9090/events/delete/1
+DELETE: http://localhost:8080/events/delete/1
 
 
 

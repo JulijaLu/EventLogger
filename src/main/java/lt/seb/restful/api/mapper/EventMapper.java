@@ -1,10 +1,10 @@
-package seb.restful.api.mapper;
+package lt.seb.restful.api.mapper;
 
+import lt.seb.restful.api.model.Event;
 import org.apache.ibatis.annotations.*;
-import seb.restful.api.model.Event;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Mapper
 public interface EventMapper {
@@ -13,14 +13,14 @@ public interface EventMapper {
     List<Event> findAll();
 
     @Select("SELECT * from events WHERE id=#{id}")
-    Event findById(int id);
+    Optional<Event> findById(@Param("id") int id);
 
     @Insert("INSERT INTO events (" +
-            "id, time, type, message, userId, transactionId ) " +
-            "VALUES (#{id}, #{time}, #{type}, #{message}, #{userId}, #{transactionId});")
+            "type, message, userId, transactionId ) " +
+            "VALUES (#{type}, #{message}, #{userId}, #{transactionId});")
     void createEvent(Event event);
 
-    @Update("UPDATE events SET time = #{time}, type = #{type}, message = #{message}," +
+    @Update("UPDATE events SET type = #{type}, message = #{message}," +
             " userId = #{userId}, transactionId = #{transactionId} WHERE id = #{id}")
     void updateEvent(Event event);
 
