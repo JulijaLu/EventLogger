@@ -1,4 +1,4 @@
-package lt.seb.restful.api.security;
+package lt.seb.restful.security;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;

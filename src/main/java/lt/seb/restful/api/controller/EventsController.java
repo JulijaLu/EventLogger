@@ -1,53 +1,38 @@
 package lt.seb.restful.api.controller;
 
-import lombok.Data;
-import lt.seb.restful.api.model.enums.MessageType;
-import lt.seb.restful.api.service.EventServiceImpl;
-import org.hibernate.service.spi.InjectService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lt.seb.restful.api.dto.EventWebDto;
+import lt.seb.restful.api.service.EventService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import lt.seb.restful.api.model.Event;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/events")
 public class EventsController {
 
-    private EventServiceImpl eventService;
-
-    public EventsController(EventServiceImpl eventService) {
-        this.eventService = eventService;
-    }
+    private EventService eventService;
 
     @GetMapping
-    public List<Event> getAllEvents() {
+    public List<EventWebDto> getAllEvents() {
         return eventService.findAll();
     }
 
     @GetMapping("/{id}")
-    public Event getEventById(@PathVariable("id") int id) {
-        return eventService.findById(id).orElse(null);
+    public EventWebDto getEventById(@PathVariable("id") int id) {
+        return eventService.findById(id);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public void createEvent(@RequestBody Event event) {
+    public void createEvent(@RequestBody EventWebDto event) {
        eventService.createEvent(event);
     }
 
     @PutMapping("/{id}")
-    public void updateEvent(@RequestBody Event newEvent, @PathVariable("id") int id) {
-        eventService.findById(id)
-                .ifPresent(event -> {
-                    event.setType(newEvent.getType());
-                    event.setMessage(newEvent.getMessage());
-                    event.setUserId(newEvent.getUserId());
-                    event.setTransactionId(newEvent.getTransactionId());
-                    eventService.updateEvent(event);
-                });
+    public EventWebDto updateEvent(@RequestBody EventWebDto event, @PathVariable("id") int id) {
+        return eventService.updateEvent(event, id);
+
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

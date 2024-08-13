@@ -1,13 +1,14 @@
 package lt.seb.restful.api.mapper;
 
+import lt.seb.restful.repository.EventRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import lt.seb.restful.api.model.Event;
-import lt.seb.restful.api.model.enums.MessageType;
+import lt.seb.restful.model.Event;
+import lt.seb.restful.model.enums.MessageType;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -17,10 +18,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
-public class EventMapperTest {
+public class EventRepositoryTest {
 
     @Autowired
-    private EventMapper eventMapper;
+    private EventRepository eventMapper;
 
     private final List<Event> events = new ArrayList<>();
 

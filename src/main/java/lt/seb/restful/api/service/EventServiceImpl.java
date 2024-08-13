@@ -1,45 +1,59 @@
 package lt.seb.restful.api.service;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lt.seb.restful.api.dto.EventWebDto;
+import lt.seb.restful.exception.EventException;
+import lt.seb.restful.mapping.EventMappingService;
+import lt.seb.restful.model.Event;
+import lt.seb.restful.repository.EventRepository;
 import org.springframework.stereotype.Service;
-import lt.seb.restful.api.mapper.EventMapper;
-import lt.seb.restful.api.model.Event;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.Optional;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Service
 public class EventServiceImpl implements EventService {
 
-    private EventMapper eventMapper;
+    private EventRepository eventRepository;
+    private EventMappingService eventMappingService;
 
-    public EventServiceImpl(EventMapper eventMapper) {
-        this.eventMapper = eventMapper;
+    @Override
+    public EventWebDto findById(int id) {
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new EventException("Event not found"));
+        return eventMappingService.toEventWebDto(event);
     }
 
     @Override
-    public Optional <Event> findById(int id) {
-        return eventMapper.findById(id);
+    public List<EventWebDto> findAll() {
+        return eventMappingService.eventWebDtoList(eventRepository.findAll());
     }
 
     @Override
-    public List<Event> findAll() {
-        return eventMapper.findAll();
+    public EventWebDto createEvent(EventWebDto eventWebDto) {
+        Event event = eventMappingService.toEvent(eventWebDto);
+        Event result = eventRepository.createEvent(event);
+        return eventMappingService.toEventWebDto(result);
     }
 
     @Override
-    public void createEvent(Event event) {
-        eventMapper.createEvent(event);
-    }
-
-    @Override
-    public void updateEvent(Event event) {
-        eventMapper.updateEvent(event);
+    public EventWebDto updateEvent(EventWebDto eventWebDto, int id) {
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new EventException("Event not found"));
+        event.setMessage(eventWebDto.message())
+                .setType(eventWebDto.type())
+                .setUserId(eventWebDto.userId())
+                .setTransactionId(eventWebDto.transactionId());
+        Event result = eventRepository.updateEvent(event);
+        return eventMappingService.toEventWebDto(result);
     }
 
     @Override
     public void delete(int id) {
-        eventMapper.deleteEvent(id);
+        eventRepository.deleteEvent(id);
     }
 
 }

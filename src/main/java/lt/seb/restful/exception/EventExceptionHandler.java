@@ -1,4 +1,4 @@
-package lt.seb.restful.api.exception;
+package lt.seb.restful.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 
@@ -20,17 +19,17 @@ public class EventExceptionHandler extends AbstractHandlerExceptionResolver {
     public ResponseEntity<Object> handleEventRequestException(EventRequestException e) {
         HttpStatus badRequest = HttpStatus.BAD_REQUEST;
 
-        EventException eventException = new EventException(
-                e.getMessage(),
-                badRequest,
-                ZonedDateTime.now(ZoneId.of("Z"))
-        );
+        EventException eventException = new EventException(e.getMessage());
         return new ResponseEntity<>(eventException, badRequest);
     }
 
 
     @Override
-    protected ModelAndView doResolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
+    protected ModelAndView doResolveException(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Object handler, Exception ex)
+    {
         return null;
     }
 }

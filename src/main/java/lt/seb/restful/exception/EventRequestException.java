@@ -1,4 +1,4 @@
-package lt.seb.restful.api.exception;
+package lt.seb.restful.exception;
 
 public class EventRequestException extends RuntimeException {
 
