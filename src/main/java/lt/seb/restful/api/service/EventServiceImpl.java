@@ -13,12 +13,11 @@ import java.util.List;
 import java.util.Optional;
 
 @AllArgsConstructor
-@NoArgsConstructor
 @Service
 public class EventServiceImpl implements EventService {
 
-    private EventRepository eventRepository;
-    private EventMappingService eventMappingService;
+    private final EventRepository eventRepository;
+    private final EventMappingService eventMappingService;
 
     @Override
     public EventWebDto findById(int id) {

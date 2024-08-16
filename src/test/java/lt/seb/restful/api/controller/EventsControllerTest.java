@@ -2,23 +2,21 @@ package lt.seb.restful.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lt.seb.restful.api.dto.EventWebDto;
-import lt.seb.restful.api.service.EventService;
-import lt.seb.restful.mapping.EventMappingService;
+import lt.seb.restful.api.service.EventServiceImpl;
+import lt.seb.restful.model.Event;
+import lt.seb.restful.model.enums.MessageType;
 import lt.seb.restful.repository.EventRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.mybatis.spring.boot.test.autoconfigure.AutoConfigureMybatis;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import lt.seb.restful.model.Event;
-import lt.seb.restful.model.enums.MessageType;
-import lt.seb.restful.api.service.EventServiceImpl;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -29,7 +27,6 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMybatis
@@ -105,9 +102,19 @@ class EventsControllerTest {
 
     @Test
     void updateEventTest() throws Exception {
-        EventWebDto eventToBeUpdated = events.get(1);
-        mockMvc.perform(put("/events/1"))
-                .andExpect(status().isNoContent());
+        Event originalEvent = new Event(1, LocalDateTime.now(), MessageType.DEBUG, "event submitted", 12345, 444555666);;
+        EventWebDto eventWebDtoToUpdate = new EventWebDto(MessageType.DEBUG, "event UPDATED", 12345, 444555666);
+        Event updatedEvent = new Event(1, LocalDateTime.now(), MessageType.DEBUG, "event UPDATED", 12345, 444555666);
+        when(eventRepository.findById(1)).thenReturn(Optional.of(originalEvent));
+        when(eventRepository.updateEvent(originalEvent)).thenReturn(updatedEvent);
+
+        mockMvc.perform(put("/events/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(eventWebDtoToUpdate)))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.type").value("DEBUG"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("event UPDATED"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.userId").value(12345));
     }
 
     @Test

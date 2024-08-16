@@ -2,9 +2,11 @@ package lt.seb.restful.api.service;
 
 import lt.seb.restful.api.dto.EventWebDto;
 import lt.seb.restful.model.Event;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+
 
 public interface EventService {
     EventWebDto findById(int id);

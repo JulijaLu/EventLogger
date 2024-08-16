@@ -1,5 +1,7 @@
 package lt.seb.restful.api.controller;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lt.seb.restful.api.dto.EventWebDto;
 import lt.seb.restful.api.service.EventService;
 import org.springframework.http.HttpStatus;
@@ -7,11 +9,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@AllArgsConstructor
 @RestController
 @RequestMapping("/events")
 public class EventsController {
 
-    private EventService eventService;
+    private final EventService eventService;
 
     @GetMapping
     public List<EventWebDto> getAllEvents() {

@@ -2,11 +2,11 @@ package lt.seb.restful.mapping;
 
 import lt.seb.restful.api.dto.EventWebDto;
 import lt.seb.restful.model.Event;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Component
+@Service
 public class EventMappingService {
 
     public EventWebDto toEventWebDto(Event event) {
