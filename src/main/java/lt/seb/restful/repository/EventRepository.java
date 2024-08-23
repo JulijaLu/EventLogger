@@ -19,7 +19,7 @@ public interface EventRepository {
     @Insert("INSERT INTO events (" +
             "type, message, userId, transactionId ) " +
             "VALUES (#{type}, #{message}, #{userId}, #{transactionId});")
-    Event createEvent(Event event);
+    int createEvent(Event event);
 
     @Update("UPDATE events SET type = #{type}, message = #{message}," +
             " userId = #{userId}, transactionId = #{transactionId} WHERE id = #{id}")

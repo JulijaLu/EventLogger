@@ -2,11 +2,11 @@ package lt.seb.restful.mapping;
 
 import lt.seb.restful.api.dto.EventWebDto;
 import lt.seb.restful.model.Event;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Service
+@Component
 public class EventMappingService {
 
     public EventWebDto toEventWebDto(Event event) {
@@ -27,10 +27,9 @@ public class EventMappingService {
                 .build();
     }
 
-    public List<EventWebDto> eventWebDtoList(List<Event> eventList){
+    public List<EventWebDto> eventWebDtoList(List<Event> eventList) {
         return eventList.stream()
                 .map(this::toEventWebDto)
                 .toList();
     }
-
 }

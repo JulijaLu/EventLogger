@@ -1,9 +1,6 @@
 package lt.seb.restful.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -13,6 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "events")
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @Builder
 @NoArgsConstructor
@@ -31,6 +29,10 @@ public class Event {
     private int userId;
     private int transactionId;
 
-
-
+    public Event(MessageType type, String message, int userId, int transactionId) {
+        this.type = type;
+        this.message = message;
+        this.userId = userId;
+        this.transactionId = transactionId;
+    }
 }

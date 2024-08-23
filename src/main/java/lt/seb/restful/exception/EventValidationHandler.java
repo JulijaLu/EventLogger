@@ -6,15 +6,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-
 @ControllerAdvice
-public class EventExceptionHandler extends AbstractHandlerExceptionResolver {
+public class EventValidationHandler extends AbstractHandlerExceptionResolver {
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = {EventRequestException.class})
     public ResponseEntity<Object> handleEventRequestException(EventRequestException e) {
         HttpStatus badRequest = HttpStatus.BAD_REQUEST;
@@ -23,6 +22,14 @@ public class EventExceptionHandler extends AbstractHandlerExceptionResolver {
         return new ResponseEntity<>(eventException, badRequest);
     }
 
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(value = {EventRequestException.class})
+    public ResponseEntity<Object> notFoundException(EventRequestException e) {
+        HttpStatus badRequest = HttpStatus.BAD_REQUEST;
+
+        EventException eventException = new EventException(e.getMessage());
+        return new ResponseEntity<>(eventException, badRequest);
+    }
 
     @Override
     protected ModelAndView doResolveException(

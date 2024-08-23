@@ -3,16 +3,18 @@ package lt.seb.restful.api.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lt.seb.restful.api.dto.EventWebDto;
 import lt.seb.restful.api.service.EventServiceImpl;
+import lt.seb.restful.mapping.EventMappingService;
 import lt.seb.restful.model.Event;
 import lt.seb.restful.model.enums.MessageType;
 import lt.seb.restful.repository.EventRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mybatis.spring.boot.test.autoconfigure.AutoConfigureMybatis;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -23,30 +25,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@AutoConfigureMybatis
 @AutoConfigureMockMvc(addFilters = false)
-@WebMvcTest(EventsController.class)
+@WebMvcTest(controllers = EventsController.class)
+@Import(EventsController.class)
 class EventsControllerTest {
 
     @Autowired
-    MockMvc mockMvc;
+    private MockMvc mockMvc;
+
+    @SpyBean
+    private EventServiceImpl eventService;
 
     @MockBean
-    EventServiceImpl eventService;
+    private EventRepository eventRepository;
 
-    @MockBean
-    EventRepository eventRepository;
-
-    @Autowired
-    ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     private final List<EventWebDto> events = new ArrayList<>();
+
+    @Autowired
+    private EventMappingService eventMappingService;
 
     @BeforeEach
     void setUp() {
@@ -80,24 +83,30 @@ class EventsControllerTest {
 
     @Test
     public void getEventByIdTest() throws Exception {
-        Event event = new Event(1, LocalDateTime.now(), MessageType.DEBUG, "event submitted", 12345, 444555666);;
+        Event event = new Event(1, LocalDateTime.now(), MessageType.DEBUG, "event submitted", 11111, 111555222);;
         when(eventRepository.findById(1)).thenReturn(Optional.of(event));
-        when(eventService.findById(1)).thenCallRealMethod();
 
         mockMvc.perform(MockMvcRequestBuilders.get("/events/1"))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.type").value("DEBUG"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("event pending"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("event submitted"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.userId").value(11111))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.transactionId").value(111555222));
     }
 
     @Test
     public void createEventTest() throws Exception {
-        EventWebDto event = EventWebDto.builder().build();
-        doThrow(new RuntimeException()).when(eventService).createEvent(event);
-        
-        mockMvc.perform(MockMvcRequestBuilders.get(""));
+        EventWebDto newEvent = new EventWebDto(MessageType.DEBUG, "event CREATED", 12345, 444555666);
+        Event newEvent2 = new Event(1, LocalDateTime.now(), MessageType.DEBUG, "event UPDATED", 12345, 444555666);
+        EventWebDto newEventUpdated = new EventWebDto(MessageType.DEBUG, "event UPDATED", 12345, 444555666);
+        when(eventService.createEvent(newEventUpdated)).thenReturn(newEventUpdated);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/events"))
+                .andExpect(status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.type").value("DEBUG"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("event CREATED"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.userId").value(12345))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.transactionId").value(444555666));
     }
 
     @Test
@@ -119,7 +128,10 @@ class EventsControllerTest {
 
     @Test
     void deleteEventTest() throws Exception {
-        mockMvc.perform(delete("/events/2"))
+        Event newEvent2 = new Event(1, LocalDateTime.now(), MessageType.DEBUG, "event UPDATED", 12345, 444555666);
+        when(eventRepository.findById(1)).thenReturn(Optional.of(newEvent2));
+        mockMvc.perform(MockMvcRequestBuilders.delete("/events/{2}", 1))
                 .andExpect(status().isNoContent());
+        verify(eventRepository).deleteEvent(1);
     }
 }
