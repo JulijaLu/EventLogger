@@ -10,8 +10,8 @@ import java.util.Optional;
 public interface EventService {
     EventWebDto findById(int id);
     List<EventWebDto> findAll();
+    EventWebDto findByType(String type);
     EventWebDto createEvent(EventWebDto event);
     EventWebDto updateEvent(EventWebDto event, int id);
     void delete(int id);
-    EventWebDto getEventWebDtoFromEvent(Optional<Event> event);
 }

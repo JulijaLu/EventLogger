@@ -1,5 +1,6 @@
 package lt.seb.restful.exception;
 
+
 public class EventRequestException extends RuntimeException {
 
     public EventRequestException() {

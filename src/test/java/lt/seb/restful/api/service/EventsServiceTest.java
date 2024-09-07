@@ -1,121 +1,168 @@
 package lt.seb.restful.api.service;
 
 import lt.seb.restful.api.dto.EventWebDto;
-import lt.seb.restful.mapping.EventMappingService;
+import lt.seb.restful.api.dto.enums.MessageType;
+import lt.seb.restful.exception.EventNotFoundException;
+import lt.seb.restful.mapping.EventMapper;
+import lt.seb.restful.mapping.EventMapperImpl;
 import lt.seb.restful.model.Event;
-import lt.seb.restful.model.enums.MessageType;
 import lt.seb.restful.repository.EventRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.Executable;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-@AutoConfigureMockMvc(addFilters = false)
-@WebMvcTest(EventServiceImpl.class)
-@Import(EventServiceImpl.class)
+@ExtendWith(MockitoExtension.class)
 public class EventsServiceTest {
 
-    @MockBean
+    @Mock
     private EventRepository eventRepository;
 
-    @MockBean
-    private EventMappingService eventMappingService;
-
-    @Autowired
     private EventService eventService;
+
+    private EventMapper eventMapper = new EventMapperImpl();
+
+    List<Event> eventList = new ArrayList<>();
+    List<EventWebDto> eventDtoList = new ArrayList<>();
+
+    @BeforeEach
+    public void setUp() {
+        eventService = new EventServiceImpl(eventMapper, eventRepository);
+        eventDtoList = List.of(
+                EventWebDto.builder()
+                        .message("hello world")
+                        .type(MessageType.DEBUG)
+                        .userId(1234)
+                        .transactionId(4555666)
+                        .build(),
+                EventWebDto.builder()
+                        .message("hello java")
+                        .type(MessageType.INFO)
+                        .userId(4411)
+                        .transactionId(3335666)
+                        .build());
+
+        eventList = List.of(
+                new Event()
+                        .setMessage("hello world")
+                        .setType("DEBUG")
+                        .setUserId(1234)
+                        .setTransactionId(4555666),
+                new Event()
+                        .setMessage("hello java")
+                        .setType("INFO")
+                        .setUserId(4411)
+                        .setTransactionId(3335666));
+    }
 
     @Test
     public void findAllEventsTest() {
-        Event event = new Event()
-                .setMessage("hello world")
-                .setType(MessageType.DEBUG)
-                .setUserId(1234)
-                .setTransactionId(4555666);
-        Event event2 = new Event()
-                .setMessage("hello java")
-                .setType(MessageType.INFO)
-                .setUserId(1235)
-                .setTransactionId(4555777);
-        List<Event> eventList = new ArrayList<>();
-        List<EventWebDto> eventDtoList = new ArrayList<>();
-        eventList.add(event);
-        eventList.add(event2);
-
-        EventWebDto eventWebDto = eventMappingService.toEventWebDto(event);
-        EventWebDto eventWebDto2 = eventMappingService.toEventWebDto(event2);
-        eventDtoList.add(eventWebDto);
-        eventDtoList.add(eventWebDto2);
-
+        // given
         when(eventRepository.findAll()).thenReturn(eventList);
-        when(eventMappingService.eventWebDtoList(eventList)).thenReturn(eventDtoList);
-        assertEquals(eventDtoList, eventMappingService.eventWebDtoList(eventList));
-        verify(eventRepository, times(1)).findAll();
-        verify(eventMappingService, times(1)).eventWebDtoList(eventList);
+
+        // when
+        List<EventWebDto> result = eventService.findAll();
+
+        // then
+        assertEquals(eventDtoList, result);
     }
 
     @Test
-    public void findEventByIdTest() {
-        Event event = new Event()
-                .setMessage("hello world")
-                .setType(MessageType.DEBUG)
-                .setUserId(1234)
-                .setTransactionId(4555666);
+    public void findEventByIdTest_eventIsFound() {
+        // given
+        Event event = eventList.get(0);
         when(eventRepository.findById(1)).thenReturn(Optional.of(event));
+
+        // when
         EventWebDto eventWebDto = eventService.findById(1);
+
+        // then
         assertEquals("hello world", eventWebDto.message());
+        assertEquals(1234, eventWebDto.userId());
     }
 
     @Test
-    public void createEventTest() {
-        EventWebDto eventWebDto = EventWebDto.builder().message("hello java")
-                .type(MessageType.DEBUG)
-                .userId(1234)
-                .transactionId(4555666).build();
-        Event event = eventMappingService.toEvent(eventWebDto);
-        when(eventRepository.createEvent(event)).thenReturn(1);
+    public void findEventByIdTest_eventIsNotFound() {
+        // when
+        final Executable executable = () -> eventService.findById(1);
+
+        // then
+        assertThrows(EventNotFoundException.class, executable, "Event not found");
     }
 
     @Test
-    public void updateEventTest() {
+    public void createEventTest_eventCreated() {
+        // given
+        Optional<Event> event = Optional.of(eventList.get(0));
+        EventWebDto eventWebDto = eventDtoList.get(0);
+        when(eventRepository.createEvent(any())).thenReturn(1);
+        when(eventRepository.findById(1)).thenReturn(event);
+
+        // when
+        EventWebDto createdEvent = eventService.createEvent(eventWebDto);
+
+        // then
+        assertEquals("hello world", createdEvent.message());
+    }
+
+    @Test
+    public void createEventTest_eventNotCreated() {
+        // when
+        final Executable executable = () -> eventService.findById(1);
+
+        // TODO: fix executable
+        // then
+        assertThrows(EventNotFoundException.class, executable,"Event not created");
+    }
+
+    @Test
+    public void updateEventTest_eventUpdated() {
+        // given
         int id = 1;
-        Event originalEvent = new Event()
-                .setMessage("hello world")
-                .setType(MessageType.DEBUG)
-                .setUserId(1234)
-                .setTransactionId(4555666);
-        EventWebDto eventWebDto = EventWebDto.builder()
-                .message("hello java")
-                .type(MessageType.DEBUG)
-                .userId(1234)
-                .transactionId(4555666)
-                .build();
-        Event updatedEvent = new Event()
-                .setMessage("hello java")
-                .setType(MessageType.DEBUG)
-                .setUserId(1234)
-                .setTransactionId(4555666);
+        Event originalEvent = eventList.get(0);
+        Optional<Event> updatedEvent = Optional.of(eventList.get(id));
+        EventWebDto eventWebDto = eventDtoList.get(id);
+        when(eventRepository.updateEvent(originalEvent)).thenReturn(id);
+        when(eventRepository.findById(id)).thenReturn(Optional.of(originalEvent), updatedEvent);
 
-        when(eventRepository.findById(id)).thenReturn(Optional.of(originalEvent));
-        when(eventRepository.updateEvent(originalEvent)).thenReturn(updatedEvent);
-        when(eventMappingService.toEventWebDto(updatedEvent)).thenReturn(eventWebDto);
+        // when
         EventWebDto result = eventService.updateEvent(eventWebDto, id);
+
+        //then
         assertEquals(eventWebDto, result);
     }
 
     @Test
+    public void updateEventTest_eventNotUpdated() {
+        // when
+        final Executable executable = () -> eventService.updateEvent(eventDtoList.get(0), 1);
+
+        //then
+        assertThrows(EventNotFoundException.class, executable,"event not updated");
+    }
+
+    @Test
     public void deleteEventTest() {
-        Event originalEvent = new Event(1, LocalDateTime.now(), MessageType.DEBUG, "event UPDATED", 12345, 444555666);
-        when(eventRepository.findById(0)).thenReturn(Optional.of(originalEvent));
-        assertEquals(originalEvent, eventRepository.findById(0));
+        // given
+        int id = 1;
+
+        // when
+        eventService.delete(id);
+
+        // then
+        verify(eventRepository).deleteEvent(id);
     }
 }

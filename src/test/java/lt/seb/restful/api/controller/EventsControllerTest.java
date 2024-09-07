@@ -3,10 +3,12 @@ package lt.seb.restful.api.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lt.seb.restful.api.dto.EventWebDto;
 import lt.seb.restful.api.service.EventServiceImpl;
-import lt.seb.restful.mapping.EventMappingService;
+import lt.seb.restful.mapping.EventMapper;
+import lt.seb.restful.mapping.EventMapperImpl;
 import lt.seb.restful.model.Event;
-import lt.seb.restful.model.enums.MessageType;
+import lt.seb.restful.api.dto.enums.MessageType;
 import lt.seb.restful.repository.EventRepository;
+import org.aspectj.bridge.Message;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @AutoConfigureMockMvc(addFilters = false)
 @WebMvcTest(controllers = EventsController.class)
-@Import(EventsController.class)
+@Import({EventsController.class, EventMapperImpl.class})
 class EventsControllerTest {
 
     @Autowired
@@ -49,7 +51,7 @@ class EventsControllerTest {
     private final List<EventWebDto> events = new ArrayList<>();
 
     @Autowired
-    private EventMappingService eventMappingService;
+    private EventMapper eventMapper;
 
     @BeforeEach
     void setUp() {
@@ -83,7 +85,7 @@ class EventsControllerTest {
 
     @Test
     public void getEventByIdTest() throws Exception {
-        Event event = new Event(1, LocalDateTime.now(), MessageType.DEBUG, "event submitted", 11111, 111555222);;
+        Event event = new Event(1, LocalDateTime.now(), "DEBUG", "event submitted", 11111, 111555222);;
         when(eventRepository.findById(1)).thenReturn(Optional.of(event));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/events/1"))
@@ -97,11 +99,15 @@ class EventsControllerTest {
     @Test
     public void createEventTest() throws Exception {
         EventWebDto newEvent = new EventWebDto(MessageType.DEBUG, "event CREATED", 12345, 444555666);
-        Event newEvent2 = new Event(1, LocalDateTime.now(), MessageType.DEBUG, "event UPDATED", 12345, 444555666);
+        Event newEvent2 = new Event(1, LocalDateTime.now(), "DEBUG", "event UPDATED", 12345, 444555666);
         EventWebDto newEventUpdated = new EventWebDto(MessageType.DEBUG, "event UPDATED", 12345, 444555666);
-        when(eventService.createEvent(newEventUpdated)).thenReturn(newEventUpdated);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/events"))
+        Event event = new Event(1, LocalDateTime.now(), "DEBUG", "event submitted", 11111, 111555222);;
+        when(eventRepository.findById(1)).thenReturn(Optional.of(event));
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/events")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(newEvent)))
                 .andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.type").value("DEBUG"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("event CREATED"))
@@ -111,11 +117,11 @@ class EventsControllerTest {
 
     @Test
     void updateEventTest() throws Exception {
-        Event originalEvent = new Event(1, LocalDateTime.now(), MessageType.DEBUG, "event submitted", 12345, 444555666);;
+        Event originalEvent = new Event(1, LocalDateTime.now(), "DEBUG", "event submitted", 12345, 444555666);;
         EventWebDto eventWebDtoToUpdate = new EventWebDto(MessageType.DEBUG, "event UPDATED", 12345, 444555666);
-        Event updatedEvent = new Event(1, LocalDateTime.now(), MessageType.DEBUG, "event UPDATED", 12345, 444555666);
+        Event updatedEvent = new Event(1, LocalDateTime.now(), "DEBUG", "event UPDATED", 12345, 444555666);
         when(eventRepository.findById(1)).thenReturn(Optional.of(originalEvent));
-        when(eventRepository.updateEvent(originalEvent)).thenReturn(updatedEvent);
+        when(eventRepository.updateEvent(originalEvent)).thenReturn(1);
 
         mockMvc.perform(put("/events/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -128,7 +134,7 @@ class EventsControllerTest {
 
     @Test
     void deleteEventTest() throws Exception {
-        Event newEvent2 = new Event(1, LocalDateTime.now(), MessageType.DEBUG, "event UPDATED", 12345, 444555666);
+        Event newEvent2 = new Event(1, LocalDateTime.now(), "DEBUG", "event UPDATED", 12345, 444555666);
         when(eventRepository.findById(1)).thenReturn(Optional.of(newEvent2));
         mockMvc.perform(MockMvcRequestBuilders.delete("/events/{2}", 1))
                 .andExpect(status().isNoContent());

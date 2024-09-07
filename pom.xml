@@ -11,6 +11,17 @@
 
 	<description>Spring Boot RESTful API project</description>
 
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<maven.compiler.source>22</maven.compiler.source>
+		<maven.compiler.target>22</maven.compiler.target>
+		<spring.boot.version>3.3.3</spring.boot.version>
+		<version.lombok>1.18.34</version.lombok>
+		<version.mapstruct>1.6.0</version.mapstruct>
+		<version.mapstruct-lombok>0.2.0</version.mapstruct-lombok>
+	</properties>
+
 	<dependencies>
 	<dependency>
 		<groupId>org.springframework.boot</groupId>
@@ -82,10 +93,16 @@
 			<version>${version.mapstruct-lombok}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-docker-compose</artifactId>
-			<version>3.3.2</version>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-surefire-plugin</artifactId>
+			<version>3.5.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.mybatis.spring.boot</groupId>
+			<artifactId>mybatis-spring-boot-starter</artifactId>
+			<version>3.0.3</version>
+		</dependency>
+
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -106,7 +123,7 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>3.3.2</version>
+				<version>${spring.boot.version}</version>
 				<executions>
 					<execution>
 						<goals>
@@ -115,8 +132,8 @@
 						<configuration>
 							<classifier>spring-boot</classifier>
 							<mainClass>
-								lt.seb.restful.api.EventMonitorApplication
-							</mainClass>
+                                lt.seb.restful.EventMonitorApplication
+                            </mainClass>
 						</configuration>
 					</execution>
 				</executions>
@@ -145,19 +162,15 @@
 					</annotationProcessorPaths>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.5.0</version>
+				<configuration>
+					<argLine>-XX:+EnableDynamicAgentLoading</argLine>
+				</configuration>
+			</plugin>
 		</plugins>
 		<finalName>event-logger</finalName>
 	</build>
-
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<maven.compiler.source>22</maven.compiler.source>
-		<maven.compiler.target>22</maven.compiler.target>
-		<spring.boot.version>3.3.2</spring.boot.version>
-		<version.lombok>1.18.34</version.lombok>
-		<version.mapstruct>1.6.0</version.mapstruct>
-		<version.mapstruct-lombok>0.2.0</version.mapstruct-lombok>
-	</properties>
-
 </project>

@@ -1,0 +1,10 @@
+DROP TABLE IF EXISTS events;
+
+CREATE TABLE events (
+    id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    time TIMESTAMP NOT NULL DEFAULT NOW(),
+    type VARCHAR(10) NOT NULL,
+    message VARCHAR(1024) NOT NULL,
+    user_id INT NOT NULL,
+    transaction_id INT NOT NULL
+);

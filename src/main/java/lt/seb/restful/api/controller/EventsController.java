@@ -28,6 +28,11 @@ public class EventsController {
         return eventService.findById(id);
     }
 
+    @GetMapping("/?type={type}")
+    public EventWebDto getEventByType(@RequestParam("type") String type) {
+        return eventService.findByType(type);
+    }
+
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public EventWebDto createEvent(@RequestBody EventWebDto event) {
