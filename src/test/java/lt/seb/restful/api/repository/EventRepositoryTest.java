@@ -3,13 +3,12 @@ package lt.seb.restful.api.repository;
 import lt.seb.restful.model.Event;
 import lt.seb.restful.repository.EventRepository;
 import org.junit.jupiter.api.Test;
-import org.mybatis.spring.annotation.MapperScan;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.ActiveProfiles;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -28,77 +27,77 @@ public class EventRepositoryTest {
         assertThat(result).hasSize(2);
     }
 
+    @Test
+    void findAll_notFound() {
+        // given
+        eventRepository.deleteAllEvents();
 
+        // when
+        final List<Event> result = eventRepository.findAll();
 
+        // then
+        assertThat(result).isEmpty();
+    }
 
-//    @Autowired
-//    private EventRepository eventMapper;
-//
-//    private final List<Event> events = new ArrayList<>();
-//
-//    @BeforeEach
-//    void setUp() {
-//        events.add(new Event(1,
-//                LocalDateTime.now(),
-//                "DEBUG",
-//                "event submitted",
-//                12345,
-//                444555666));
-//        events.add(new Event(2,
-//                LocalDateTime.now(),
-//                "INFO",
-//                "event being processed",
-//                12346,
-//                444555333));
-//    }
-//
-//    @Test
-//    void findAllTest() {
-//        eventMapper.createEvent(events.get(0));
-//        eventMapper.createEvent(events.get(1));
-//        List<Event> events = eventMapper.findAll();
-//        assertNotNull(events);
-//        assertEquals(2, events.size());
-//    }
-//
-//    @Test
-//    void findByIdTest() {
-//        Event event = new Event(1, LocalDateTime.now(), "DEBUG", "event submitted", 12345, 444555666);
-//        Event foundEventOptional = eventMapper.findById(event.getId()).orElse(null);
-//        assertNotNull(foundEventOptional);
-//        assertEquals(event.getId(), foundEventOptional.getId());
-//    }
-//
-//    @Test
-//    void createEventTest() {
-//        Event event = events.get(0);
-//        List <Event> savedEvents = new ArrayList<>();
-//        savedEvents.add(event);
-//        assertNotNull(savedEvents);
-//        assertEquals(1, savedEvents.size());
-//        Event createdEvent = savedEvents.get(0);
-//        assertEquals(1, createdEvent.getId());
-//        assertEquals(MessageType.DEBUG, createdEvent.getType());
-//        assertEquals("event submitted", createdEvent.getMessage());
-//        assertEquals(12345, createdEvent.getUserId());
-//        assertEquals(444555666, createdEvent.getTransactionId());
-//    }
-//
-//    @Test
-//    void updateEventTest() {
-//        Event event = events.get(1);
-////        Event updatedEvent = eventMapper.findById(event.getId()).orElse(null);
-//        Event eventToBeMerged = events.get(0);
-////        eventMapper.updateEvent(eventToBeMerged, 2);
-//        assertNotNull(eventToBeMerged);
-//        assertEquals("no code was debugged", event.getMessage());
-//    }
-//
-//    @Test
-//    void deleteEventTest() {
-//        Event event = events.get(1);
-//        eventMapper.deleteEvent(event.getId());
-//        Event deletedEvent = eventMapper.findById(event.getId()).orElse(null);
-//        assertNull(deletedEvent);
-//    }
+    @Test
+    void findEventByIdTest() {
+        // when
+        int id = 1;
+        Optional<Event> event = eventRepository.findById(id);
+
+        // then
+        assertThat(event.get().getMessage()).isEqualTo("event pending");
+    }
+
+    @Test
+    void findEventByIdTest_eventNotFound() {
+        // given
+        eventRepository.deleteAllEvents();
+
+        // when
+        int id = 1;
+        Optional<Event> event = eventRepository.findById(id);
+
+        // then
+        assertThat(event.isEmpty());
+    }
+
+    @Test
+    // when
+    void createEventTest() {
+        // given
+        Event event = new Event(1, LocalDateTime.now(), "DEBUG", "event submitted", 11111, 111555222);
+    int id = eventRepository.createEvent(event);
+
+    // then
+    assertThat(event.getId()).isEqualTo(1);
+    }
+
+    @Test
+    void createEventTest_eventNotCreated() {
+
+        Event event = new Event(0, LocalDateTime.now(), "DEBUG", "event submitted", 11111, 111555222);
+        int id = eventRepository.createEvent(event);
+
+        // then
+        assertThat(id).isEqualTo(1);
+    }
+
+    @Test
+    void updateEventTest() {
+        Event event2 = new Event(1, LocalDateTime.now(), "DEBUG", "event submitted", 11111, 111555222);
+        int id = eventRepository.createEvent(event2);
+
+        assertThat(id).isEqualTo(event2);
+    }
+
+    @Test
+    void deleteEventTest() {
+        // when
+        Optional<Event> event = eventRepository.findById(1);
+        eventRepository.deleteEvent(event.get().getId());
+
+        // then
+        assertThat(event.isEmpty());
+    }
 }

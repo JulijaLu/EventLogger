@@ -1,11 +1,15 @@
 package lt.seb.restful.model;
 
-
-import jakarta.persistence.*;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
-import lt.seb.restful.api.dto.enums.MessageType;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -28,11 +32,4 @@ public class Event {
     private String message;
     private int userId;
     private int transactionId;
-
-    public Event(MessageType type, String message, int userId, int transactionId) {
-        this.type = type.toString();
-        this.message = message;
-        this.userId = userId;
-        this.transactionId = transactionId;
-    }
 }

@@ -1,9 +1,7 @@
 package lt.seb.restful.repository;
 
-import lt.seb.restful.api.dto.EventWebDto;
 import lt.seb.restful.model.Event;
 import org.apache.ibatis.annotations.*;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,6 +35,11 @@ public interface EventRepository {
     @Delete("DELETE from events WHERE ID = #{id}")
     void deleteEvent(int id);
 
-    @Select("SELECT * from events WHERE type=#{type}")
-    Optional<Event> findByType(@Param("type") String type);
+    @Delete("DELETE from events")
+    void deleteAllEvents();
+
+    @Select("SELECT * from events WHERE type=#{fieldName} OR message " +
+            "LIKE #{fieldValue} OR userId = #{fieldValue, jdbcType=INTEGER} " +
+            "OR transactionId = #{fieldValue, jdbcType=INTEGER}")
+    List<Event> filterEvents(@Param("fieldName") String fieldName);
 }

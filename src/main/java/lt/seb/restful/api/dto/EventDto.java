@@ -4,7 +4,7 @@ import lombok.Builder;
 import lt.seb.restful.api.dto.enums.MessageType;
 
 @Builder
-public record EventWebDto(
+public record EventDto(
         MessageType type,
         String message,
         int userId,

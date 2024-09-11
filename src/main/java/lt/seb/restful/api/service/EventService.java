@@ -1,17 +1,14 @@
 package lt.seb.restful.api.service;
 
-import lt.seb.restful.api.dto.EventWebDto;
-import lt.seb.restful.model.Event;
+import lt.seb.restful.api.dto.EventDto;
 
 import java.util.List;
-import java.util.Optional;
-
 
 public interface EventService {
-    EventWebDto findById(int id);
-    List<EventWebDto> findAll();
-    EventWebDto findByType(String type);
-    EventWebDto createEvent(EventWebDto event);
-    EventWebDto updateEvent(EventWebDto event, int id);
+    EventDto findById(int id);
+    List<EventDto> findAll();
+    EventDto createEvent(EventDto event);
+    EventDto updateEvent(EventDto event, int id);
     void delete(int id);
+    List<EventDto> filterEvents(String fieldName);
 }

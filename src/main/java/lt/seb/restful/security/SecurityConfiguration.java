@@ -1,7 +1,7 @@
 package lt.seb.restful.security;
 
 import lombok.RequiredArgsConstructor;
-import lt.seb.restful.config.BasicAuthConfigProperties;
+import lt.seb.restful.config.ConfigProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,12 +22,12 @@ import java.util.regex.Pattern;
 
 @Configuration
 @EnableWebSecurity
-@EnableConfigurationProperties(BasicAuthConfigProperties.class)
+@EnableConfigurationProperties(ConfigProperties.class)
 @RequiredArgsConstructor
 public class SecurityConfiguration {
     private static final String INCLUDE_REGEX_PATTERN = "^(%s)$";
 
-    private final BasicAuthConfigProperties basicAuthConfigProperties;
+    private final ConfigProperties configProperties;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -49,8 +49,8 @@ public class SecurityConfiguration {
     public UserDetailsService userDetailsService() {
 
         UserDetails userDetails = User.builder()
-                .username(basicAuthConfigProperties.name())
-                .password(passwordEncoder().encode(basicAuthConfigProperties.password()))
+                .username(configProperties.name())
+                .password(passwordEncoder().encode(configProperties.password()))
                 .build();
         return new InMemoryUserDetailsManager(userDetails);
     }

@@ -6,7 +6,7 @@ import org.springframework.validation.annotation.Validated;
 
 @ConfigurationProperties(prefix = "spring.security.user")
 @Validated
-public record BasicAuthConfigProperties(
+public record ConfigProperties(
         @NotBlank String name,
         @NotBlank String password
 ) {}

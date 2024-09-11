@@ -1,6 +1,6 @@
 package lt.seb.restful.api.service;
 
-import lt.seb.restful.api.dto.EventWebDto;
+import lt.seb.restful.api.dto.EventDto;
 import lt.seb.restful.api.dto.enums.MessageType;
 import lt.seb.restful.exception.EventNotFoundException;
 import lt.seb.restful.mapping.EventMapper;
@@ -11,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -22,8 +21,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class EventsServiceTest {
@@ -36,19 +34,19 @@ public class EventsServiceTest {
     private EventMapper eventMapper = new EventMapperImpl();
 
     List<Event> eventList = new ArrayList<>();
-    List<EventWebDto> eventDtoList = new ArrayList<>();
+    List<EventDto> eventDtoList = new ArrayList<>();
 
     @BeforeEach
     public void setUp() {
         eventService = new EventServiceImpl(eventMapper, eventRepository);
         eventDtoList = List.of(
-                EventWebDto.builder()
+                EventDto.builder()
                         .message("hello world")
                         .type(MessageType.DEBUG)
                         .userId(1234)
                         .transactionId(4555666)
                         .build(),
-                EventWebDto.builder()
+                EventDto.builder()
                         .message("hello java")
                         .type(MessageType.INFO)
                         .userId(4411)
@@ -74,7 +72,7 @@ public class EventsServiceTest {
         when(eventRepository.findAll()).thenReturn(eventList);
 
         // when
-        List<EventWebDto> result = eventService.findAll();
+        List<EventDto> result = eventService.findAll();
 
         // then
         assertEquals(eventDtoList, result);
@@ -87,11 +85,11 @@ public class EventsServiceTest {
         when(eventRepository.findById(1)).thenReturn(Optional.of(event));
 
         // when
-        EventWebDto eventWebDto = eventService.findById(1);
+        EventDto eventDto = eventService.findById(1);
 
         // then
-        assertEquals("hello world", eventWebDto.message());
-        assertEquals(1234, eventWebDto.userId());
+        assertEquals("hello world", eventDto.message());
+        assertEquals(1234, eventDto.userId());
     }
 
     @Test
@@ -107,12 +105,12 @@ public class EventsServiceTest {
     public void createEventTest_eventCreated() {
         // given
         Optional<Event> event = Optional.of(eventList.get(0));
-        EventWebDto eventWebDto = eventDtoList.get(0);
+        EventDto eventDto = eventDtoList.get(0);
         when(eventRepository.createEvent(any())).thenReturn(1);
         when(eventRepository.findById(1)).thenReturn(event);
 
         // when
-        EventWebDto createdEvent = eventService.createEvent(eventWebDto);
+        EventDto createdEvent = eventService.createEvent(eventDto);
 
         // then
         assertEquals("hello world", createdEvent.message());
@@ -120,10 +118,14 @@ public class EventsServiceTest {
 
     @Test
     public void createEventTest_eventNotCreated() {
-        // when
-        final Executable executable = () -> eventService.findById(1);
+        // given
+        Event event = eventList.get(0);
+        EventDto eventDto = eventDtoList.get(0);
+        when(eventRepository.createEvent(event)).thenReturn(1);
 
-        // TODO: fix executable
+        // when
+        final Executable executable = () -> eventService.createEvent(eventDto);
+
         // then
         assertThrows(EventNotFoundException.class, executable,"Event not created");
     }
@@ -134,21 +136,26 @@ public class EventsServiceTest {
         int id = 1;
         Event originalEvent = eventList.get(0);
         Optional<Event> updatedEvent = Optional.of(eventList.get(id));
-        EventWebDto eventWebDto = eventDtoList.get(id);
+        EventDto eventDto = eventDtoList.get(id);
         when(eventRepository.updateEvent(originalEvent)).thenReturn(id);
         when(eventRepository.findById(id)).thenReturn(Optional.of(originalEvent), updatedEvent);
 
         // when
-        EventWebDto result = eventService.updateEvent(eventWebDto, id);
+        EventDto result = eventService.updateEvent(eventDto, id);
 
         //then
-        assertEquals(eventWebDto, result);
+        assertEquals(eventDto, result);
     }
 
     @Test
     public void updateEventTest_eventNotUpdated() {
+        //given
+        int id = 55;
+        Event event = eventList.get(0);
+        EventDto eventDto = eventDtoList.get(0);
+        when(eventRepository.findById(id)).thenReturn(Optional.of(event));
         // when
-        final Executable executable = () -> eventService.updateEvent(eventDtoList.get(0), 1);
+        final Executable executable = () -> eventService.updateEvent(eventDto, id);
 
         //then
         assertThrows(EventNotFoundException.class, executable,"event not updated");
@@ -164,5 +171,19 @@ public class EventsServiceTest {
 
         // then
         verify(eventRepository).deleteEvent(id);
+    }
+
+    @Test
+    public void deleteEventTest_eventNotDeleted() {
+        // given
+        int id = 1;
+        doThrow(new EventNotFoundException()).when(eventRepository).deleteEvent(id);
+
+        // when
+        final Executable executable = () -> eventService.delete(id);
+
+        // then
+        assertThrows(EventNotFoundException.class, executable, "event not deleted");
+        verify(eventRepository, never()).deleteEvent(id);
     }
 }

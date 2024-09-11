@@ -1,21 +1,20 @@
 package lt.seb.restful.mapping;
 
-import lt.seb.restful.api.dto.EventWebDto;
+import lt.seb.restful.api.dto.EventDto;
 import lt.seb.restful.api.dto.enums.MessageType;
 import lt.seb.restful.model.Event;
 import org.mapstruct.Mapper;
-
 
 import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface EventMapper {
 
-    EventWebDto eventToEventDto(Event event);
+    EventDto convertEventToEventDto(Event event);
 
-    Event eventWebDtoToEvent(EventWebDto eventWebDto);
+    Event convertEventDtoToEvent(EventDto eventDto);
 
-    List<EventWebDto> eventsToEventWebDtos(List<Event> eventList);
+    List<EventDto> convertEventListToEventDtoList(List<Event> eventList);
 
     default String messageTypeToString(MessageType messageType) {
         if (messageType == null) {
