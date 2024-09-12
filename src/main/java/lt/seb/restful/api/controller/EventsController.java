@@ -1,6 +1,6 @@
 package lt.seb.restful.api.controller;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lt.seb.restful.api.dto.EventDto;
 import lt.seb.restful.api.service.EventService;
 import org.springframework.http.HttpStatus;
@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/events")
 public class EventsController {
@@ -42,8 +42,8 @@ public class EventsController {
         eventService.delete(id);
     }
 
-    @GetMapping("/?fieldName={fieldName}")
-    public List<EventDto> filterEvents(@RequestParam("fieldName") String fieldName) {
-        return eventService.filterEvents(fieldName);
+    @GetMapping("/filter")
+    public List<EventDto> filterEvents(@RequestParam("type") String type, @RequestParam("message") String message) {
+        return eventService.filterEvents(type, message);
     }
 }

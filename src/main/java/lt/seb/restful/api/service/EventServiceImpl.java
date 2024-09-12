@@ -1,25 +1,23 @@
 package lt.seb.restful.api.service;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import lt.seb.restful.api.dto.EventDto;
 import lt.seb.restful.exception.EventNotFoundException;
 import lt.seb.restful.mapping.EventMapper;
 import lt.seb.restful.model.Event;
 import lt.seb.restful.repository.EventRepository;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
+@Log4j2
 public class EventServiceImpl implements EventService {
 
     private final EventMapper eventMapper;
     private final EventRepository eventRepository;
-    private final Logger log = LogManager.getLogger("events");
 
     @Override
     public List<EventDto> findAll() {
@@ -30,7 +28,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public EventDto findById(int id) {
         Event event = findEventOrThrowException(id);
-        log.info("Event found: {}", event);
+        log.debug("Event found: {}", event);
         return eventMapper.convertEventToEventDto(event);
     }
 
@@ -39,7 +37,7 @@ public class EventServiceImpl implements EventService {
         Event event = eventMapper.convertEventDtoToEvent(eventDto);
         int id = eventRepository.createEvent(event);
         Event result = findEventOrThrowException(id);
-        log.info("Event successfully created");
+        log.debug("Event successfully created");
         return eventMapper.convertEventToEventDto(result);
     }
 
@@ -48,7 +46,7 @@ public class EventServiceImpl implements EventService {
         Event event = findEventOrThrowException(id);
         updateEventFields(event, eventDto);
         eventRepository.updateEvent(event);
-        log.info("Event {} updated", eventDto);
+        log.debug("Event {} updated", eventDto);
         return eventMapper.convertEventToEventDto(event);
     }
 
@@ -58,27 +56,9 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventDto> filterEvents(String fieldName) {
-        List<Event> events = eventRepository.findAll();
-        List<Event> filteredEvents = filterEvents(events, fieldName);
-        return eventMapper.convertEventListToEventDtoList(filteredEvents);
-    }
-
-    private List<Event> filterEvents(List<Event> events, String fieldName) {
-        return events.stream()
-                .filter(event -> {
-                    if (event.getType() != null && event.getType().equals(fieldName)) {
-                        return true;
-                    } else if (event.getMessage() != null && event.getMessage().contains(fieldName)) {
-                        return true;
-                    } else if (Integer.parseInt(fieldName) == event.getUserId()) {
-                        return true;
-                    } else if (Integer.parseInt(fieldName) == event.getTransactionId()) {
-                        return true;
-                    }
-                    return false;
-                })
-                .collect(Collectors.toList());
+    public List<EventDto> filterEvents(String type, String message) {
+        List<Event> events = eventRepository.filterEvents(type, message);
+        return eventMapper.convertEventListToEventDtoList(events);
     }
 
     public void updateEventFields(Event event, EventDto eventDto) {

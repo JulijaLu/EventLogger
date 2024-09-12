@@ -10,17 +10,9 @@ import java.util.Optional;
 public interface EventRepository {
 
     @Select("SELECT * FROM events")
-    @Results({
-            @Result(property = "userId", column = "user_id"),
-            @Result(property = "transactionId", column = "transaction_id")
-    })
     List<Event> findAll();
 
     @Select("SELECT * from events WHERE id=#{id}")
-    @Results({
-            @Result(property = "userId", column = "user_id"),
-            @Result(property = "transactionId", column = "transaction_id")
-    })
     Optional<Event> findById(@Param("id") int id);
 
     @Insert("INSERT INTO events (" +
@@ -38,8 +30,7 @@ public interface EventRepository {
     @Delete("DELETE from events")
     void deleteAllEvents();
 
-    @Select("SELECT * from events WHERE type=#{fieldName} OR message " +
-            "LIKE #{fieldValue} OR userId = #{fieldValue, jdbcType=INTEGER} " +
-            "OR transactionId = #{fieldValue, jdbcType=INTEGER}")
-    List<Event> filterEvents(@Param("fieldName") String fieldName);
+    @Select("SELECT * from events WHERE ((#{type} IS NOT NULL AND type = #{type}) OR (#{type} IS NULL)) " +
+            "AND ((#{message} IS NOT NULL AND message LIKE \'%#{message}%\') OR (#{message} IS NULL))")
+    List<Event> filterEvents(@Param("type") String type, @Param("message") String message);
 }

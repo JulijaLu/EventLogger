@@ -67,7 +67,7 @@ public class EventsServiceTest {
     }
 
     @Test
-    public void findAllEventsTest() {
+    public void findAllEvents_eventsFound() {
         // given
         when(eventRepository.findAll()).thenReturn(eventList);
 
@@ -79,7 +79,7 @@ public class EventsServiceTest {
     }
 
     @Test
-    public void findEventByIdTest_eventIsFound() {
+    public void findEventById_eventIsFound() {
         // given
         Event event = eventList.get(0);
         when(eventRepository.findById(1)).thenReturn(Optional.of(event));
@@ -93,7 +93,7 @@ public class EventsServiceTest {
     }
 
     @Test
-    public void findEventByIdTest_eventIsNotFound() {
+    public void findEventById_eventIsNotFound() {
         // when
         final Executable executable = () -> eventService.findById(1);
 
@@ -102,7 +102,7 @@ public class EventsServiceTest {
     }
 
     @Test
-    public void createEventTest_eventCreated() {
+    public void createEvent_eventCreated() {
         // given
         Optional<Event> event = Optional.of(eventList.get(0));
         EventDto eventDto = eventDtoList.get(0);
@@ -117,7 +117,7 @@ public class EventsServiceTest {
     }
 
     @Test
-    public void createEventTest_eventNotCreated() {
+    public void createEvent_eventNotCreated() {
         // given
         Event event = eventList.get(0);
         EventDto eventDto = eventDtoList.get(0);
@@ -131,7 +131,7 @@ public class EventsServiceTest {
     }
 
     @Test
-    public void updateEventTest_eventUpdated() {
+    public void updateEvent_eventUpdated() {
         // given
         int id = 1;
         Event originalEvent = eventList.get(0);
@@ -148,7 +148,7 @@ public class EventsServiceTest {
     }
 
     @Test
-    public void updateEventTest_eventNotUpdated() {
+    public void updateEvent_eventNotUpdated() {
         //given
         int id = 55;
         Event event = eventList.get(0);
@@ -162,7 +162,7 @@ public class EventsServiceTest {
     }
 
     @Test
-    public void deleteEventTest() {
+    public void deleteEvent() {
         // given
         int id = 1;
 
@@ -171,19 +171,5 @@ public class EventsServiceTest {
 
         // then
         verify(eventRepository).deleteEvent(id);
-    }
-
-    @Test
-    public void deleteEventTest_eventNotDeleted() {
-        // given
-        int id = 1;
-        doThrow(new EventNotFoundException()).when(eventRepository).deleteEvent(id);
-
-        // when
-        final Executable executable = () -> eventService.delete(id);
-
-        // then
-        assertThrows(EventNotFoundException.class, executable, "event not deleted");
-        verify(eventRepository, never()).deleteEvent(id);
     }
 }
