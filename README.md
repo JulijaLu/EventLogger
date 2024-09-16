@@ -8,13 +8,13 @@ RESTful API provides an ability to see and modify events of application logs.
 
 ---
 
-JDK 22, MyBatis, Docker, H2 in-memory database
+JDK 21, MyBatis, H2 in-memory database
 
 ## **Build**
 
 ---
 
-Preprequisite: Java JDK 22
+Prerequisite: Java JDK 21
 
 ## **Run**
 
@@ -28,13 +28,13 @@ mvn -N wrapper:wrapper
 
 ---
 
-http://localhost:8080/
+http://localhost:5000/
 
 ## **Swagger documentation**
 
 ---
 
-http://localhost:8080/swagger-ui/index.html
+http://localhost:5000/swagger-ui/index.html
 
 ## **Sample flow**
 
@@ -42,19 +42,19 @@ http://localhost:8080/swagger-ui/index.html
 
 See all events:
 
-GET: http://localhost:8080/events
+GET: http://localhost:5000/events
 
 Create new event:
 
-POST: http://localhost:8080/events
+POST: http://localhost:5000/events
 
 Update event:
 
-PUT: http://localhost:8080/events/update/1
+PUT: http://localhost:5000/events/update/1
 
 Delete event:
 
-DELETE: http://localhost:8080/events/delete/1
+DELETE: http://localhost:5000/events/delete/1
 
 
 

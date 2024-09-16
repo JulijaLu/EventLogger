@@ -1,5 +1,6 @@
 package lt.seb.restful.exception;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
 
 @ControllerAdvice
+@Log4j2
 public class EventValidationHandler extends DefaultHandlerExceptionResolver {
 
     @ExceptionHandler(value = {EventRequestException.class,
@@ -29,6 +31,7 @@ public class EventValidationHandler extends DefaultHandlerExceptionResolver {
     @ExceptionHandler(value = {RuntimeException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<Object> internalServerException(RuntimeException e) {
+        log.error("Internal server error", e);
         EventErrorResponse eventErrorResponse = new EventErrorResponse(
                 e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value());
         return new ResponseEntity<>(eventErrorResponse, HttpStatus.INTERNAL_SERVER_ERROR);

@@ -30,7 +30,18 @@ public interface EventRepository {
     @Delete("DELETE from events")
     void deleteAllEvents();
 
-    @Select("SELECT * from events WHERE ((#{type} IS NOT NULL AND type = #{type}) OR (#{type} IS NULL)) " +
-            "AND ((#{message} IS NOT NULL AND message LIKE \'%#{message}%\') OR (#{message} IS NULL))")
-    List<Event> filterEvents(@Param("type") String type, @Param("message") String message);
+    //    @Select("SELECT * from events WHERE ((#{type} IS NOT NULL AND type = #{type}) OR (#{type} IS NULL)) " +
+//            "AND ((#{message} IS NOT NULL AND message LIKE '%#{message}%') OR (#{message} IS NULL))")
+    @Select({
+            "<script>" +
+            "SELECT * FROM events " +
+            "WHERE 1=1 " +
+            "<if test='type != null'>AND type = #{type}</if> " +
+            "<if test='message != null'>AND message LIKE CONCAT('%', #{message}, '%')</if> " +
+                    "<if test='user_id != null'>AND user_id = #{user_id}</if> " +
+                    "<if test='transaction_id != null'>AND transaction_id = #{transaction_id}</if>" +
+            "</script>"
+    })
+    List<Event> filterEvents(@Param("type") String type, @Param("message") String message,
+                             @Param("user_id") Integer user_id, @Param("transaction_id") Integer transaction_id);
 }

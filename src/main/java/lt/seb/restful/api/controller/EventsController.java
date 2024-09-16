@@ -2,10 +2,12 @@ package lt.seb.restful.api.controller;
 
 import lombok.RequiredArgsConstructor;
 import lt.seb.restful.api.dto.EventDto;
+import lt.seb.restful.api.dto.enums.MessageType;
 import lt.seb.restful.api.service.EventService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.awt.*;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -27,8 +29,8 @@ public class EventsController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public EventDto createEvent(@RequestBody EventDto event) {
-       return eventService.createEvent(event);
+    public EventDto createEvent(@RequestBody EventDto eventDto) {
+       return eventService.createEvent(eventDto);
     }
 
     @PutMapping("/{id}")
@@ -43,7 +45,8 @@ public class EventsController {
     }
 
     @GetMapping("/filter")
-    public List<EventDto> filterEvents(@RequestParam("type") String type, @RequestParam("message") String message) {
-        return eventService.filterEvents(type, message);
+    public List<EventDto> filterEvents(@RequestParam("type") MessageType type, @RequestParam("message") String message,
+                                       @RequestParam("userId") int userId, @RequestParam("transactionId") int transactionId) {
+        return eventService.filterEvents(type, message, userId, transactionId);
     }
 }

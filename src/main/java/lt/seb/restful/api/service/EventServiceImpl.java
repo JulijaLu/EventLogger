@@ -3,6 +3,7 @@ package lt.seb.restful.api.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import lt.seb.restful.api.dto.EventDto;
+import lt.seb.restful.api.dto.enums.MessageType;
 import lt.seb.restful.exception.EventNotFoundException;
 import lt.seb.restful.mapping.EventMapper;
 import lt.seb.restful.model.Event;
@@ -36,7 +37,8 @@ public class EventServiceImpl implements EventService {
     public EventDto createEvent(EventDto eventDto) {
         Event event = eventMapper.convertEventDtoToEvent(eventDto);
         int id = eventRepository.createEvent(event);
-        Event result = findEventOrThrowException(id);
+        Event result = eventRepository.findById(id)
+                .orElseThrow(() -> new EventNotFoundException("Event not created"));
         log.debug("Event successfully created");
         return eventMapper.convertEventToEventDto(result);
     }
@@ -56,8 +58,9 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventDto> filterEvents(String type, String message) {
-        List<Event> events = eventRepository.filterEvents(type, message);
+    public List<EventDto> filterEvents(MessageType type, String message, int userId, int transactionId) {
+        String messageType = eventMapper.messageTypeToString(type);
+        List<Event> events = eventRepository.filterEvents(messageType, message, userId, transactionId);
         return eventMapper.convertEventListToEventDtoList(events);
     }
 

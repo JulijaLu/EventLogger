@@ -122,7 +122,7 @@ public class EventRepositoryTest {
     @Test
     void filterEvents_filteredByType() {
         // when
-        List<Event> events = eventRepository.filterEvents("DEBUG", null);
+        List<Event> events = eventRepository.filterEvents("DEBUG", null, 10101, 333555666);
 
         //then
         assertThat(events).hasSize(1);
@@ -132,7 +132,7 @@ public class EventRepositoryTest {
     @Test
     void filterEvents_filteredByMessage() {
         // when
-        List<Event> events = eventRepository.filterEvents(null, "submit");
+        List<Event> events = eventRepository.filterEvents(null, "submit", 11111, 111555222);
 
         //then
         assertThat(events).hasSize(1);
