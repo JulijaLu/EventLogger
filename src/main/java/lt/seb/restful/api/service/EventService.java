@@ -11,5 +11,5 @@ public interface EventService {
     EventDto createEvent(EventDto event);
     EventDto updateEvent(EventDto event, int id);
     void delete(int id);
-    List<EventDto> filterEvents(MessageType type, String message, int userId, int transactionId);
+    List<EventDto> filterEvents(MessageType type, String message, Integer userId, Integer transactionId);
 }

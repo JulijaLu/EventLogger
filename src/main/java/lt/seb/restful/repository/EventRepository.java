@@ -30,8 +30,6 @@ public interface EventRepository {
     @Delete("DELETE from events")
     void deleteAllEvents();
 
-    //    @Select("SELECT * from events WHERE ((#{type} IS NOT NULL AND type = #{type}) OR (#{type} IS NULL)) " +
-//            "AND ((#{message} IS NOT NULL AND message LIKE '%#{message}%') OR (#{message} IS NULL))")
     @Select({
             "<script>" +
             "SELECT * FROM events " +

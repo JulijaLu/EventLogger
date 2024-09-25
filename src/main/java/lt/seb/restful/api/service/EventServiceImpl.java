@@ -58,9 +58,17 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventDto> filterEvents(MessageType type, String message, int userId, int transactionId) {
+    public List<EventDto> filterEvents(MessageType type, String message, Integer userId, Integer transactionId) {
+        userId = userId != null ? userId : null;
+        transactionId = transactionId != null ? transactionId : null;
         String messageType = eventMapper.messageTypeToString(type);
+
+        log.debug("Filtering events with parameters: type={}, message={}, userId={}, transactionId={}",
+                messageType, message, userId, transactionId);
+
         List<Event> events = eventRepository.filterEvents(messageType, message, userId, transactionId);
+        log.debug("Events found: {}", events);
+
         return eventMapper.convertEventListToEventDtoList(events);
     }
 

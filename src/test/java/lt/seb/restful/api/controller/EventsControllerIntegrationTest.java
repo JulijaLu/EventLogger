@@ -5,7 +5,6 @@ import lt.seb.restful.api.dto.EventDto;
 import lt.seb.restful.api.dto.enums.MessageType;
 import lt.seb.restful.mapping.EventMapper;
 import lt.seb.restful.repository.EventRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mybatis.spring.boot.test.autoconfigure.AutoConfigureMybatis;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,7 +108,7 @@ class EventsControllerIntegrationTest {
     @Test
     void updateEvent_eventNotUpdated() throws Exception {
         // given
-        EventDto eventDtoToUpdate = new EventDto(DEBUG, "event UPDATED", 0, 444555666);
+        EventDto eventDtoToUpdate = new EventDto(DEBUG, "event UPDATED", -111, 444555666);
 
         // then
         mockMvc.perform(put("/events/1")

@@ -7,7 +7,6 @@ import lt.seb.restful.api.service.EventService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.awt.*;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -45,8 +44,11 @@ public class EventsController {
     }
 
     @GetMapping("/filter")
-    public List<EventDto> filterEvents(@RequestParam("type") MessageType type, @RequestParam("message") String message,
-                                       @RequestParam("userId") int userId, @RequestParam("transactionId") int transactionId) {
+    public List<EventDto> filterEvents(
+            @RequestParam(value = "type", required = false) MessageType type,
+            @RequestParam(value = "message", required = false) String message,
+            @RequestParam(value = "userId", required = false) Integer userId,
+            @RequestParam(value = "transactionId", required = false) Integer transactionId) {
         return eventService.filterEvents(type, message, userId, transactionId);
     }
 }
