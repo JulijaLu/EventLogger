@@ -1,6 +1,5 @@
 package lt.seb.restful.api.repository;
 
-import lt.seb.restful.exception.EventNotFoundException;
 import lt.seb.restful.model.Event;
 import lt.seb.restful.repository.EventRepository;
 import org.junit.jupiter.api.Test;
@@ -17,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @MybatisTest
-public class EventRepositoryTest {
+class EventRepositoryTest {
 
     @Autowired
     private EventRepository eventRepository;
@@ -58,7 +57,7 @@ public class EventRepositoryTest {
         Optional<Event> event = eventRepository.findById(1);
 
         // then
-        assertThat(event.isEmpty());
+        assertThat(event).isNotPresent();
     }
 
     @Test
@@ -116,7 +115,7 @@ public class EventRepositoryTest {
         eventRepository.deleteEvent(1);
 
         // then
-        assertThat(eventRepository.findById(1).isEmpty());
+        assertThat(eventRepository.findById(1)).isNotPresent();
     }
 
     @Test

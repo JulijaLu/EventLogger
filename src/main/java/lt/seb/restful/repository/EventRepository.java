@@ -15,9 +15,13 @@ public interface EventRepository {
     @Select("SELECT * from events WHERE id=#{id}")
     Optional<Event> findById(@Param("id") int id);
 
+    @Select("SELECT * from events WHERE user_id=#{user_id}")
+    Optional<Event> findByUserId(@Param("user_id") Integer user_id);
+
     @Insert("INSERT INTO events (" +
             "type, message, user_id, transaction_id, time ) " +
-            "VALUES (#{type}, #{message}, #{userId}, #{transactionId}, now());")
+            "VALUES (#{type}, #{message}, #{userId}, #{transactionId}, now())")
+    @Options(useGeneratedKeys = true, keyProperty = "id")
     int createEvent(Event event);
 
     @Update("UPDATE events SET type = #{type}, message = #{message}," +

@@ -22,8 +22,8 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<EventDto> findAll() {
-        List<Event> eventList = eventRepository.findAll();
-        return eventMapper.convertEventListToEventDtoList(eventList);
+        List<Event> events = eventRepository.findAll();
+        return eventMapper.convertEventListToEventDtoList(events);
     }
 
     @Override
@@ -34,9 +34,20 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    public EventDto findByUserId(int userId) {
+        Event event = eventRepository.findByUserId(userId)
+                .orElseThrow(() -> {
+                    log.error("event not found with userId: {}", userId);
+                    return new EventNotFoundException("event not found with id: " + userId);
+                });
+        return eventMapper.convertEventToEventDto(event);
+    }
+
+    @Override
     public EventDto createEvent(EventDto eventDto) {
         Event event = eventMapper.convertEventDtoToEvent(eventDto);
-        int id = eventRepository.createEvent(event);
+        eventRepository.createEvent(event);
+        int id = event.getId();
         Event result = eventRepository.findById(id)
                 .orElseThrow(() -> new EventNotFoundException("Event not created"));
         log.debug("Event successfully created");

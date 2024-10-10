@@ -26,6 +26,11 @@ public class EventsController {
         return eventService.findById(id);
     }
 
+    @GetMapping("/user/{userId}")
+    public EventDto getEventByUserId(@PathVariable("userId") int userId) {
+        return eventService.findByUserId(userId);
+    }
+
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public EventDto createEvent(@RequestBody EventDto eventDto) {

@@ -24,6 +24,7 @@ public class EventValidationHandler extends DefaultHandlerExceptionResolver {
     @ExceptionHandler(value = {EventNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<EventErrorResponse> notFoundException(EventNotFoundException e) {
+        e.printStackTrace();
         EventErrorResponse eventErrorResponse = new EventErrorResponse(e.getMessage(), HttpStatus.NOT_FOUND.value());
         return new ResponseEntity<>(eventErrorResponse, HttpStatus.NOT_FOUND);
     }

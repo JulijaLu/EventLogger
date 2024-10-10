@@ -24,7 +24,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class EventsServiceTest {
+class EventsServiceTest {
 
     @Mock
     private EventRepository eventRepository;
@@ -67,7 +67,7 @@ public class EventsServiceTest {
     }
 
     @Test
-    public void findAllEvents_eventsFound() {
+    void findAllEvents_eventsFound() {
         // given
         when(eventRepository.findAll()).thenReturn(eventList);
 
@@ -79,7 +79,7 @@ public class EventsServiceTest {
     }
 
     @Test
-    public void findEventById_eventIsFound() {
+    void findEventById_eventIsFound() {
         // given
         Event event = eventList.get(0);
         when(eventRepository.findById(1)).thenReturn(Optional.of(event));
@@ -93,7 +93,7 @@ public class EventsServiceTest {
     }
 
     @Test
-    public void findEventById_eventIsNotFound() {
+    void findEventById_eventIsNotFound() {
         // when
         final Executable executable = () -> eventService.findById(1);
 
@@ -102,7 +102,7 @@ public class EventsServiceTest {
     }
 
     @Test
-    public void createEvent_eventCreated() {
+    void createEvent_eventCreated() {
         // given
         Optional<Event> event = Optional.of(eventList.get(0));
         EventDto eventDto = eventDtoList.get(0);
@@ -117,7 +117,7 @@ public class EventsServiceTest {
     }
 
     @Test
-    public void createEvent_eventNotCreated() {
+    void createEvent_eventNotCreated() {
         // given
         Event event = eventList.get(0);
         EventDto eventDto = eventDtoList.get(0);
@@ -131,7 +131,7 @@ public class EventsServiceTest {
     }
 
     @Test
-    public void updateEvent_eventUpdated() {
+    void updateEvent_eventUpdated() {
         // given
         int id = 1;
         Event originalEvent = eventList.get(0);
@@ -148,12 +148,11 @@ public class EventsServiceTest {
     }
 
     @Test
-    public void updateEvent_eventNotUpdated() {
+    void updateEvent_eventNotUpdated() {
         //given
         int id = 55;
-        Event event = eventList.get(0);
         EventDto eventDto = eventDtoList.get(0);
-        when(eventRepository.findById(id)).thenReturn(Optional.of(event));
+        when(eventRepository.findById(id)).thenReturn(Optional.empty());
         // when
         final Executable executable = () -> eventService.updateEvent(eventDto, id);
 
@@ -162,7 +161,7 @@ public class EventsServiceTest {
     }
 
     @Test
-    public void deleteEvent() {
+    void deleteEvent() {
         // given
         int id = 1;
 
