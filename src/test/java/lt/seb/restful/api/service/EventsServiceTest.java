@@ -106,7 +106,11 @@ class EventsServiceTest {
         // given
         Optional<Event> event = Optional.of(eventList.get(0));
         EventDto eventDto = eventDtoList.get(0);
-        when(eventRepository.createEvent(any())).thenReturn(1);
+        when(eventRepository.createEvent(any(Event.class))).thenAnswer(invocation -> {
+            Event createdEvent = invocation.getArgument(0);
+            createdEvent.setId(1);
+            return 1;
+        });
         when(eventRepository.findById(1)).thenReturn(event);
 
         // when

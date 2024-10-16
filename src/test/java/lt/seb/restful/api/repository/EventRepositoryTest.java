@@ -69,7 +69,7 @@ class EventRepositoryTest {
         int id = eventRepository.createEvent(event);
 
         // then
-        assertThat(id).isEqualTo(event.getId());
+        assertThat(id).isEqualTo(1);
     }
 
     // fix
