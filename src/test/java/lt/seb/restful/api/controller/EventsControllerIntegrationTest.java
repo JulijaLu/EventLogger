@@ -3,10 +3,7 @@ package lt.seb.restful.api.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lt.seb.restful.api.dto.EventDto;
 import lt.seb.restful.api.dto.enums.MessageType;
-import lt.seb.restful.mapping.EventMapper;
-import lt.seb.restful.repository.EventRepository;
 import org.junit.jupiter.api.Test;
-import org.mybatis.spring.boot.test.autoconfigure.AutoConfigureMybatis;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,7 +19,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-@AutoConfigureMybatis
 @AutoConfigureMockMvc(addFilters = false)
 @DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
 class EventsControllerIntegrationTest {
@@ -30,11 +26,6 @@ class EventsControllerIntegrationTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
     @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    private EventRepository eventRepository;
-
-    @Autowired
-    private EventMapper eventMapper;
 
     @Test
     void getAllEvents_allEventsFound() throws Exception {

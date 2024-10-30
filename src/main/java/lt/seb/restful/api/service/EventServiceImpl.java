@@ -2,6 +2,7 @@ package lt.seb.restful.api.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+
 import lt.seb.restful.api.dto.EventDto;
 import lt.seb.restful.api.dto.enums.MessageType;
 import lt.seb.restful.exception.EventNotFoundException;
@@ -29,17 +30,14 @@ public class EventServiceImpl implements EventService {
     @Override
     public EventDto findById(int id) {
         Event event = findEventOrThrowException(id);
-        log.debug("Event found: {}", event);
         return eventMapper.convertEventToEventDto(event);
     }
 
     @Override
     public EventDto findByUserId(int userId) {
         Event event = eventRepository.findByUserId(userId)
-                .orElseThrow(() -> {
-                    log.error("event not found with userId: {}", userId);
-                    return new EventNotFoundException("event not found with id: " + userId);
-                });
+                .orElseThrow(() ->
+                        new EventNotFoundException("event not found with id: " + userId));
         return eventMapper.convertEventToEventDto(event);
     }
 
@@ -47,10 +45,7 @@ public class EventServiceImpl implements EventService {
     public EventDto createEvent(EventDto eventDto) {
         Event event = eventMapper.convertEventDtoToEvent(eventDto);
         eventRepository.createEvent(event);
-        int id = event.getId();
-        Event result = eventRepository.findById(id)
-                .orElseThrow(() -> new EventNotFoundException("Event not created"));
-        log.debug("Event successfully created");
+        Event result = findEventOrThrowException(event.getId());
         return eventMapper.convertEventToEventDto(result);
     }
 
@@ -59,7 +54,6 @@ public class EventServiceImpl implements EventService {
         Event event = findEventOrThrowException(id);
         updateEventFields(event, eventDto);
         eventRepository.updateEvent(event);
-        log.debug("Event {} updated", eventDto);
         return eventMapper.convertEventToEventDto(event);
     }
 
@@ -69,17 +63,11 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventDto> filterEvents(MessageType type, String message, Integer userId, Integer transactionId) {
-        userId = userId != null ? userId : null;
-        transactionId = transactionId != null ? transactionId : null;
+    public List<EventDto> filterEvents(
+            MessageType type, String message, Integer userId, Integer transactionId)
+    {
         String messageType = eventMapper.messageTypeToString(type);
-
-        log.debug("Filtering events with parameters: type={}, message={}, userId={}, transactionId={}",
-                messageType, message, userId, transactionId);
-
         List<Event> events = eventRepository.filterEvents(messageType, message, userId, transactionId);
-        log.debug("Events found: {}", events);
-
         return eventMapper.convertEventListToEventDtoList(events);
     }
 
@@ -92,9 +80,7 @@ public class EventServiceImpl implements EventService {
 
     public Event findEventOrThrowException(int id) {
         return eventRepository.findById(id)
-                .orElseThrow(() -> {
-                    log.error("event not found with id: {}", id);
-                    return new EventNotFoundException("event not found with id: " + id);
-                });
+                .orElseThrow(() ->
+                        new EventNotFoundException("event not found with id: " + id));
     }
 }

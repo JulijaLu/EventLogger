@@ -8,5 +8,5 @@ public enum MessageType {
     DEBUG,
     INFO,
     WARNING,
-    ERROR;
+    ERROR
 }

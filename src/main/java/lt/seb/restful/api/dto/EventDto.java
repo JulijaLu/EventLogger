@@ -11,5 +11,4 @@ public record EventDto(
         int transactionId
 ) {
 
-
 }

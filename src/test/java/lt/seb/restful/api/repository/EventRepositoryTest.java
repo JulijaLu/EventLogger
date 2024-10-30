@@ -63,11 +63,11 @@ class EventRepositoryTest {
     @Test
     void createEvent_eventCreated() {
         // given
-        Event event = new Event(1, LocalDateTime.now(), "DEBUG", "event submitted", 11111, 111555222);
-
+        Event event = new Event(
+                1, LocalDateTime.now(), "DEBUG", "event submitted", 11111, 111555222
+        );
         // when
         int id = eventRepository.createEvent(event);
-
         // then
         assertThat(id).isEqualTo(1);
     }
@@ -76,11 +76,11 @@ class EventRepositoryTest {
     @Test
     void createEvent_eventNotCreated() {
         // given
-        Event event = new Event(0, LocalDateTime.now(), "DEBUGGGGGG111", "event submitted", 11111, 111555222);
-
+        Event event = new Event(
+                0, LocalDateTime.now(), "DEBUGGGGGG111", "event submitted", 11111, 111555222
+        );
         // when
         final Executable executable = () -> eventRepository.createEvent(event);
-
         // then
         assertThrows(DataIntegrityViolationException.class, executable);
     }
@@ -88,11 +88,10 @@ class EventRepositoryTest {
     @Test
     void updateEvent_eventUpdated() {
         // given
-        Event event = new Event(1, LocalDateTime.now(), "DEBUG", "event submitted", 11111, 111555222);
-
+        Event event = new Event(
+                1, LocalDateTime.now(), "DEBUG", "event submitted", 11111, 111555222);
         // when
         eventRepository.updateEvent(event);
-
         // then
         assertThat(eventRepository.findById(1).get().getMessage()).isEqualTo("event submitted");
     }
@@ -100,11 +99,11 @@ class EventRepositoryTest {
     @Test
     void updateEvent_eventNotUpdated() {
         // given
-        Event event = new Event(1, LocalDateTime.now(), "DEBUGGGGGG111", "event submitted", 11111, 111555222);
-
+        Event event = new Event(
+                1, LocalDateTime.now(), "DEBUGGGGGG111", "event submitted", 11111, 111555222
+        );
         // when
         final Executable executable = () -> eventRepository.updateEvent(event);
-
         // then
         assertThrows(DataIntegrityViolationException.class, executable);
     }
@@ -113,7 +112,6 @@ class EventRepositoryTest {
     void deleteEvent_eventDeleted() {
         // when
         eventRepository.deleteEvent(1);
-
         // then
         assertThat(eventRepository.findById(1)).isNotPresent();
     }
@@ -121,8 +119,9 @@ class EventRepositoryTest {
     @Test
     void filterEvents_filteredByType() {
         // when
-        List<Event> events = eventRepository.filterEvents("DEBUG", null, 10101, 333555666);
-
+        List<Event> events = eventRepository.filterEvents(
+                "DEBUG", null, 10101, 333555666
+        );
         //then
         assertThat(events).hasSize(1);
         assertThat(events).extracting(Event::getType).contains("DEBUG");
@@ -131,8 +130,9 @@ class EventRepositoryTest {
     @Test
     void filterEvents_filteredByMessage() {
         // when
-        List<Event> events = eventRepository.filterEvents(null, "submit", 11111, 111555222);
-
+        List<Event> events = eventRepository.filterEvents(
+                null, "submit", 11111, 111555222
+        );
         //then
         assertThat(events).hasSize(1);
         assertThat(events).extracting(Event::getMessage).contains("event submitted");
