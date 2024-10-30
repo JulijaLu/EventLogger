@@ -21,8 +21,7 @@ Docker installed on your machine
 
 ---
  
-.\mvnw clean install  
-.\mvnw spring-boot:run
+mvn spring-boot:run
 
 ## **Server**
 
