@@ -17,7 +17,7 @@ JDK 21, MyBatis, H2 in-memory database
 Prerequisite: Java JDK 21  
 Docker installed on your machine
 
-## **Run **
+## **Run**
 
 ---
  
