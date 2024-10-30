@@ -49,8 +49,8 @@ POST: http://localhost:5000/events
 
 Update event:
 
-PUT: http://localhost:5000/events/update/1
+PUT: http://localhost:5000/events/{id}
 
 Delete event:
 
-DELETE: http://localhost:5000/events/delete/1
+DELETE: http://localhost:5000/events/{id}
