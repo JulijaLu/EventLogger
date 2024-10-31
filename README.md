@@ -20,7 +20,7 @@ Docker installed on your machine
 ## **Run**
 
 ---
- 
+
 mvn spring-boot:run
 
 ## **Server**
