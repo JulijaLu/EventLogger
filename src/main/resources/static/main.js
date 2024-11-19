@@ -1,4 +1,4 @@
-$(document).ready(function() {
+var Events = JSON.stringify( {
     $.ajax({
         type: 'GET',
         url: '/events/list',
