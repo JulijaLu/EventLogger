@@ -2,7 +2,6 @@ package lt.seb.restful.api.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-
 import lt.seb.restful.api.dto.EventDto;
 import lt.seb.restful.api.dto.enums.MessageType;
 import lt.seb.restful.exception.EventNotFoundException;
@@ -12,6 +11,8 @@ import lt.seb.restful.repository.EventRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static java.util.Collections.emptyList;
 
 @RequiredArgsConstructor
 @Service
@@ -30,14 +31,6 @@ public class EventServiceImpl implements EventService {
     @Override
     public EventDto findById(int id) {
         Event event = findEventOrThrowException(id);
-        return eventMapper.convertEventToEventDto(event);
-    }
-
-    @Override
-    public EventDto findByUserId(int userId) {
-        Event event = eventRepository.findByUserId(userId)
-                .orElseThrow(() ->
-                        new EventNotFoundException("event not found with id: " + userId));
         return eventMapper.convertEventToEventDto(event);
     }
 
@@ -64,10 +57,12 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<EventDto> filterEvents(
-            MessageType type, String message, Integer userId, Integer transactionId)
-    {
+            MessageType type, String message, Integer userId, Integer transactionId) {
         String messageType = eventMapper.messageTypeToString(type);
         List<Event> events = eventRepository.filterEvents(messageType, message, userId, transactionId);
+        if (events.isEmpty()) {
+            return emptyList();
+        }
         return eventMapper.convertEventListToEventDtoList(events);
     }
 

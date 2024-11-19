@@ -3,17 +3,14 @@ package lt.seb.restful.api.repository;
 import lt.seb.restful.model.Event;
 import lt.seb.restful.repository.EventRepository;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @MybatisTest
 class EventRepositoryTest {
@@ -66,54 +63,71 @@ class EventRepositoryTest {
         Event event = new Event(
                 1, LocalDateTime.now(), "DEBUG", "event submitted", 11111, 111555222
         );
+
         // when
         int id = eventRepository.createEvent(event);
+
         // then
         assertThat(id).isEqualTo(1);
     }
 
-    // fix
     @Test
-    void createEvent_eventNotCreated() {
+    void eventNotCreated() {
         // given
         Event event = new Event(
-                0, LocalDateTime.now(), "DEBUGGGGGG111", "event submitted", 11111, 111555222
+                0, LocalDateTime.now(), "something", "event submitted", 00, 111555222
         );
+
         // when
-        final Executable executable = () -> eventRepository.createEvent(event);
+        int id = eventRepository.createEvent(event);
+
         // then
-        assertThrows(DataIntegrityViolationException.class, executable);
+        assertThat(id).isNotEqualTo(0);
     }
 
     @Test
-    void updateEvent_eventUpdated() {
+    void updateEvent() {
         // given
         Event event = new Event(
                 1, LocalDateTime.now(), "DEBUG", "event submitted", 11111, 111555222);
+
         // when
         eventRepository.updateEvent(event);
+
         // then
         assertThat(eventRepository.findById(1).get().getMessage()).isEqualTo("event submitted");
     }
 
     @Test
-    void updateEvent_eventNotUpdated() {
+    void eventNotUpdated() {
         // given
         Event event = new Event(
-                1, LocalDateTime.now(), "DEBUGGGGGG111", "event submitted", 11111, 111555222
+                5, LocalDateTime.now(), "DEBUG", "event submitted", 11111, 111555222
         );
+
         // when
-        final Executable executable = () -> eventRepository.updateEvent(event);
+        int id = eventRepository.updateEvent(event);
+
         // then
-        assertThrows(DataIntegrityViolationException.class, executable);
+        assertThat(id).isEqualTo(0);
     }
 
     @Test
     void deleteEvent_eventDeleted() {
         // when
         eventRepository.deleteEvent(1);
+
         // then
         assertThat(eventRepository.findById(1)).isNotPresent();
+    }
+
+    @Test
+    void eventNotDeleted() {
+        // when
+        eventRepository.deleteEvent(5);
+
+        // then
+        assertThat(eventRepository.findById(5)).isNotPresent();
     }
 
     @Test
@@ -122,6 +136,7 @@ class EventRepositoryTest {
         List<Event> events = eventRepository.filterEvents(
                 "DEBUG", null, 10101, 333555666
         );
+
         //then
         assertThat(events).hasSize(1);
         assertThat(events).extracting(Event::getType).contains("DEBUG");
@@ -131,8 +146,9 @@ class EventRepositoryTest {
     void filterEvents_filteredByMessage() {
         // when
         List<Event> events = eventRepository.filterEvents(
-                null, "submit", 11111, 111555222
+                null, "submit", 10102, 333555667
         );
+
         //then
         assertThat(events).hasSize(1);
         assertThat(events).extracting(Event::getMessage).contains("event submitted");

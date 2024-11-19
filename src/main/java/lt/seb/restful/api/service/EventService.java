@@ -7,7 +7,6 @@ import java.util.List;
 
 public interface EventService {
     EventDto findById(int id);
-    EventDto findByUserId(int userId);
     List<EventDto> findAll();
     EventDto createEvent(EventDto event);
     EventDto updateEvent(EventDto event, int id);
