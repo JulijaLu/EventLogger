@@ -31,7 +31,7 @@ class EventsControllerIntegrationTest {
     @Test
     void getAllEvents_allEventsFound() throws Exception {
         // when&then
-        mockMvc.perform(MockMvcRequestBuilders.get("/events"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/events/all"))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].type").value("DEBUG"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].message").value("event pending"))

@@ -19,13 +19,13 @@ RESTful API provides an ability to add and modify events of application logs.
 ---
 
 Prerequisite: Java JDK 21
-> mvnw clean install
+> ./mvnw clean install
 
 ## **Run**
 
 ---
 
-> mvnw spring-boot:run
+> ./mvnw spring-boot:run
 
 ## **Basic Authentication**
 
@@ -59,13 +59,15 @@ Create new event:
 POST: http://localhost:5000/events
     
 Request body:  
+    ```
     {
-    "type": "WARNING",
-    "message": "obsolete method",
-    "userId": 10103,
+    "type": "WARNING",  
+    "message": "obsolete method",  
+    "userId": 10103,  
     "transactionId": 333555668 
     }
-    
+    ```  
+Response example
 
 Update event:
 

@@ -2,6 +2,7 @@ package lt.seb.restful.api.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import lt.seb.restful.api.dto.EventDto;
 import lt.seb.restful.api.dto.enums.MessageType;
 import lt.seb.restful.exception.EventNotFoundException;
@@ -16,7 +17,7 @@ import static java.util.Collections.emptyList;
 
 @RequiredArgsConstructor
 @Service
-@Log4j2
+@Slf4j
 public class EventServiceImpl implements EventService {
 
     private final EventMapper eventMapper;

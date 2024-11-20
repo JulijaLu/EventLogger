@@ -25,7 +25,7 @@ public class SecurityConfiguration {
         http
                 .authorizeHttpRequests(auth -> auth
                     .requestMatchers(getRequestMatcher(
-                            "/swagger-ui.+|/api-docs|/actuator.*|/health.*|/error.*|/index.*")).permitAll()
+                            "/swagger-ui.+|/api-docs|/actuator.*|/health.*|/error.*|/index.*|/all.*")).permitAll()
                     .anyRequest().authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(Customizer.withDefaults());
