@@ -9,4 +9,5 @@ import org.springframework.validation.annotation.Validated;
 public record ConfigProperties(
         @NotBlank String name,
         @NotBlank String password
-) {}
+) {
+}

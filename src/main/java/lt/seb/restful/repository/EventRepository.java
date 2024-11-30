@@ -33,13 +33,13 @@ public interface EventRepository {
 
     @Select({
             "<script>" +
-            "SELECT * FROM events " +
-            "WHERE 1=1 " +
-            "<if test='type != null'>AND type = #{type}</if> " +
-            "<if test='message != null'>AND message LIKE CONCAT('%', #{message}, '%')</if> " +
-                    "<if test='user_id != null'>AND user_id = #{user_id}</if> " +
-                    "<if test='transaction_id != null'>AND transaction_id = #{transaction_id}</if> " +
-            "</script>"
+                    "SELECT * FROM events " +
+                    "WHERE 1=1 " +
+                    "<if test='type != null'>AND type = #{type} </if> " +
+                    "<if test='message != null'>AND message LIKE CONCAT('%', #{message}, '%') </if> " +
+                    "<if test='user_id != null'>AND user_id = #{user_id} </if> " +
+                    "<if test='transaction_id != null'>AND transaction_id = #{transaction_id} </if> " +
+                    "</script>"
     })
     List<Event> filterEvents(@Param("type") String type, @Param("message") String message,
                              @Param("user_id") Integer userId, @Param("transaction_id") Integer transactionId);

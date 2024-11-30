@@ -1,7 +1,6 @@
 package lt.seb.restful.security;
 
 import lt.seb.restful.config.ConfigProperties;
-
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,9 +23,9 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                    .requestMatchers(getRequestMatcher(
-                            "/swagger-ui.+|/api-docs|/actuator.*|/health.*|/error.*|/index.*|/all.*")).permitAll()
-                    .anyRequest().authenticated())
+                        .requestMatchers(getRequestMatcher(
+                                "/swagger-ui.+|/api-docs|/actuator.*|/health.*|/error.*|/index.*|/events.*")).permitAll()
+                        .anyRequest().authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(Customizer.withDefaults());
         return http.build();

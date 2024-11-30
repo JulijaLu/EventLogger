@@ -10,5 +10,6 @@ public record EventDto(
         int userId,
         int transactionId
 ) {
-
 }
+
+

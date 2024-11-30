@@ -29,8 +29,8 @@ class EventsControllerIntegrationTest {
     private MockMvc mockMvc;
 
     @Test
-    void getAllEvents_allEventsFound() throws Exception {
-        // when&then
+    void getAllEvents() throws Exception {
+        // when / then
         mockMvc.perform(MockMvcRequestBuilders.get("/events/all"))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].type").value("DEBUG"))
@@ -44,8 +44,8 @@ class EventsControllerIntegrationTest {
     }
 
     @Test
-    void getEventById_eventFoundById() throws Exception {
-        // when&then
+    void getEventById() throws Exception {
+        // when / then
         mockMvc.perform(MockMvcRequestBuilders.get("/events/1"))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.type").value("DEBUG"))
@@ -55,19 +55,19 @@ class EventsControllerIntegrationTest {
     }
 
     @Test
-    void getEventById_eventNotFoundById() throws Exception {
-        // when&then
+    void eventNotFoundById() throws Exception {
+        // when / then
         mockMvc.perform(MockMvcRequestBuilders.get("/events/3"))
                 .andExpect(status().isNotFound())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("event not found with id: 3"));
     }
 
     @Test
-    void createEvent_eventCreated() throws Exception {
+    void createEvent() throws Exception {
         // given
         EventDto eventDto = new EventDto(MessageType.DEBUG, "event submitted", 11111, 111555222);
 
-        // when & then
+        // when / then
         mockMvc.perform(MockMvcRequestBuilders.post("/events")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(eventDto)))
@@ -76,11 +76,11 @@ class EventsControllerIntegrationTest {
     }
 
     @Test
-    void updateEvent_eventUpdated() throws Exception {
+    void updateEvent() throws Exception {
         // given
         EventDto eventDtoToUpdate = new EventDto(DEBUG, "event UPDATED", 12345, 444555666);
 
-        // when&then
+        // when / then
         mockMvc.perform(put("/events/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(eventDtoToUpdate)))
@@ -92,11 +92,11 @@ class EventsControllerIntegrationTest {
     }
 
     @Test
-    void updateEvent_evenNotUpdated() throws Exception {
+    void evenNotUpdated() throws Exception {
         // given
         EventDto eventDtoToUpdate = new EventDto(DEBUG, "event UPDATED", 12345, 444555666);
 
-        // when&then
+        // when / then
         mockMvc.perform(put("/events/5")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(eventDtoToUpdate)))
@@ -104,31 +104,46 @@ class EventsControllerIntegrationTest {
     }
 
     @Test
-    void deleteEvent_eventDeleted() throws Exception {
-        // when&then
+    void deleteEvent() throws Exception {
+        // when / then
         mockMvc.perform(MockMvcRequestBuilders.delete("/events/{2}", 1))
                 .andExpect(status().isNoContent());
     }
 
     @Test
-    void deleteEvent_eventNotDeleted() throws Exception {
-        // when&then
+    void eventNotDeleted() throws Exception {
+        // when / then
         mockMvc.perform(MockMvcRequestBuilders.delete("/events/{5}", 1))
                 .andExpect(status().isNoContent());
     }
 
     @Test
-    void filterEvent_eventFiltered() throws Exception {
-        // when&then
+    void filterEvent() throws Exception {
+        // when / then
         mockMvc.perform(MockMvcRequestBuilders.get("/events/filter")
                         .param("type", "DEBUG")
-                        .param("message", "event pending")
-                        .param("userId", "10101")
-                        .param("transactionId", "333555666"))
+                        .param("message", "pending")
+                        .param("userId", "")
+                        .param("transactionId", ""))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].type").value("DEBUG"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].message").value("event pending"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].userId").value(10101))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].transactionId").value(333555666));
+    }
+
+    @Test
+    void eventNotFiltered() throws Exception {
+        // given
+        mockMvc.perform(MockMvcRequestBuilders.delete("/events/{0}", 1));
+
+        // when / then
+        mockMvc.perform(MockMvcRequestBuilders.get("/events/filter")
+                        .param("type", "DEBUG")
+                        .param("message", "event pending")
+                        .param("userId", "10101")
+                        .param("transactionId", "333555666"))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0]").doesNotExist());
     }
 }

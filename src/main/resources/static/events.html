@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Events list</h1>
+<table id="event_table" style="border: 1px solid black;">
+    <thead>
+    <tr>
+        <th>Event type</th>
+        <th>Event message</th>
+        <th>Event user ID</th>
+        <th>Event transaction ID</th>
+        <th>Event ID</th>
+        <th></th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody id="table_body"></tbody>
+</table>
+<button id="createButton">Create Event</button>
+
+<div id="eventForm" style="display:none;">
+    <h2 id="formTitle">Add Event</h2>
+    <form id="eventFormElement">
+        <label for="type">Type:</label>
+        <input type="text" id="type" name="type"><br>
+        <label for="message">Message:</label>
+        <input type="text" id="message" name="message"><br>
+        <label for="userId">User ID:</label>
+        <input type="number" id="userId" name="userId"><br>
+        <label for="transactionId">Transaction ID:</label>
+        <input type="number" id="transactionId" name="transactionId"><br>
+        <button type="button" id="saveButton">Save</button>
+        <button type="button" id="cancelButton">Cancel</button>
+    </form>
+</div>
+
+<script type="text/javascript">
+
+    window.alert("This is an alert!");
+
+    async function fetchUserData() {
+        try {
+            const response = await fetch('/events/all');
+            const events = await response.json();
+
+            const tableBody = document.getElementById("event_table").getElementsByTagName("tbody")[0];
+
+            tableBody.innerHTML = "";
+
+            events.forEach(event => {
+            const row = tableBody.insertRow();
+            row.insertCell(0).textContent = event.type;
+            row.insertCell(1).textContent = event.message;
+            row.insertCell(2).textContent = event.userId;
+            row.insertCell(3).textContent = event.transactionId;
+            row.insertCell(4).textContent = event.id;
+            const editCell = row.insertCell(5);
+                const editButton = document.createElement("button");
+                editButton.textContent = "Edit";
+                editButton.onclick = () => editEvent(event);
+                editCell.appendChild(editButton);
+        });
+
+        } catch (error) {
+            console.error('There was a problem with the fetch operation:', error);
+            return [];
+        }
+    }
+
+    function showForm(show, event = null) {
+        const form = document.getElementById("eventForm");
+        form.style.display = show ? "block" : "none";
+        if (show && event) {
+            document.getElementById("formTitle").textContent = "Edit Event";
+            document.getElementById("type").value = event.type;
+            document.getElementById("message").value = event.message;
+            document.getElementById("userId").value = event.userId;
+            document.getElementById("transactionId").value = event.transactionId;
+        } else {
+            document.getElementById("formTitle").textContent = "Add Event";
+            document.getElementById("eventFormElement").reset();
+        }
+    }
+
+ function editEvent(event) {
+        showForm(true, event);
+    }
+    document.getElementById("createButton").onclick = () => showForm(true);
+    document.getElementById("cancelButton").onclick = () => showForm(false);
+    document.getElementById("saveButton").onclick = async () => {
+        const event = {
+            type: document.getElementById("type").value,
+            message: document.getElementById("message").value,
+            userId: document.getElementById("userId").value,
+            transactionId: document.getElementById("transactionId").value
+        };
+
+document.getElementById("saveButton").onclick = async () => {
+    const event = {
+        type: document.getElementById("type").value,
+        message: document.getElementById("message").value,
+        userId: document.getElementById("userId").value,
+        transactionId: document.getElementById("transactionId").value
+    };
+
+    const method = event.id ? 'PUT' : 'POST';
+    const url = event.id ? 'events/${event.id}' : '/events';
+
+    try {
+        const response = await fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(event)
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        showForm(false);
+        fetchUserData();
+    } catch (error) {
+        console.error('There was a problem with the save operation:');
+    }
+};
+        showForm(false);
+        fetchUserData();
+    };
+
+    fetchUserData();
+</script>
+</body>
+</html>

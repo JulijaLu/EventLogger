@@ -5,7 +5,7 @@ import lt.seb.restful.api.dto.EventDto;
 import lt.seb.restful.api.dto.enums.MessageType;
 import lt.seb.restful.api.service.EventService;
 import org.springframework.http.HttpStatus;
-import org.springframework.ui.Model;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,12 +17,6 @@ public class EventsController {
 
     private final EventService eventService;
 
-    @GetMapping("/list")
-    public String getEvents(Model model) {
-        model.addAttribute("eventList", eventService.findAll());
-        return "eventList";
-    }
-
     @GetMapping("/all")
     public List<EventDto> getAllEvents() {
         return eventService.findAll();
@@ -33,15 +27,16 @@ public class EventsController {
         return eventService.findById(id);
     }
 
-    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public EventDto createEvent(@RequestBody EventDto eventDto) {
-       return eventService.createEvent(eventDto);
+    public ResponseEntity<EventDto> createEvent(@RequestBody EventDto eventDto) {
+        EventDto createdEvent = eventService.createEvent(eventDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdEvent);
     }
 
     @PutMapping("/{id}")
-    public EventDto updateEvent(@RequestBody EventDto event, @PathVariable("id") int id) {
-        return eventService.updateEvent(event, id);
+    public ResponseEntity<EventDto> updateEvent(@RequestBody EventDto event, @PathVariable("id") int id) {
+        EventDto updatedEvent = eventService.updateEvent(event, id);
+        return ResponseEntity.ok(updatedEvent);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

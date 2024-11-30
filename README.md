@@ -59,28 +59,27 @@ Create new event:
 POST: http://localhost:5000/events
     
 Request body:  
-    ```
-    {
-    "type": "WARNING",  
-    "message": "obsolete method",  
-    "userId": 10103,  
-    "transactionId": 333555668 
-    }
-    ```  
-Response example
+```
+{ "type": "WARNING",
+    "message": "obsolete method",
+    "userId": 10103,
+    "transactionId": 333555668 }
+```  
+Response example:
+
+
 
 Update event:
 
 PUT: http://localhost:5000/events/{id}
 
 Request body:
-{
-    "type": "INFO",
+```
+{ "type": "INFO",
     "message": "event updated",
     "userId": 10101,
-    "transactionId": 333555666
-    }
-
+    "transactionId": 333555666 }
+```
 Delete event:
 
 DELETE: http://localhost:5000/events/{id}

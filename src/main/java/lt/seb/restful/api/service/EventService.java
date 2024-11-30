@@ -7,9 +7,14 @@ import java.util.List;
 
 public interface EventService {
     EventDto findById(int id);
+
     List<EventDto> findAll();
+
     EventDto createEvent(EventDto event);
+
     EventDto updateEvent(EventDto event, int id);
+
     void delete(int id);
+
     List<EventDto> filterEvents(MessageType type, String message, Integer userId, Integer transactionId);
 }
